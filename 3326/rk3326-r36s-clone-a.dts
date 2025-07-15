@@ -848,7 +848,6 @@
 			<2 RK_PB7 RK_FUNC_GPIO &pcfg_pull_up>,
 			<2 RK_PC0 RK_FUNC_GPIO &pcfg_pull_up>,
 			<2 RK_PB3 RK_FUNC_GPIO &pcfg_pull_up>;
-
 	};
       };
     headphone {

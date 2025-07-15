@@ -130,7 +130,7 @@
 		amux-a-gpios = <&gpio2 RK_PC0 GPIO_ACTIVE_LOW>;
 		amux-b-gpios = <&gpio2 RK_PB7 GPIO_ACTIVE_HIGH>;
 		/* adc mux enable gpio */
-		amux-en-gpios = <&gpio2 RK_PB3 GPIO_ACTIVE_LOW>;
+		amux-en-gpios = <&gpio2 RK_PB4 GPIO_ACTIVE_LOW>;
 
 		/* adc calculate scale */
 		button-adc-scale = <2>;
@@ -372,6 +372,17 @@
         regulator-boot-on;
         vin-supply = <&usb_midu>;
     };
+	sdio_pwrseq: sdio-pwrseq {
+		compatible = "mmc-pwrseq-simple";
+		/*clocks = <&rk817 1>;
+		clock-names = "ext_clock";
+		*/
+		pinctrl-0 = <&wifi_enable_h>;
+		pinctrl-names = "default";
+		post-power-on-delay-ms = <2000>;
+		reset-gpios = <&gpio0 RK_PA2 GPIO_ACTIVE_LOW>;
+	};
+
 };
 
 &dmc {
@@ -814,18 +825,27 @@
 };
 
 &sdio {
-    cap-sd-highspeed;
-    cd-gpios = <&gpio0 RK_PA2 GPIO_ACTIVE_LOW>; /*[> CD GPIO <]*/
-    max-frequency = <0x5f5e100>;
-    card-detect-delay = <0x320>;
-    supports-sd;
-    sd-uhs-sdr12;
-    sd-uhs-sdr25;
-    sd-uhs-sdr50;
-    sd-uhs-sdr104;
-    vmmc-supply = <&vcc3v0_dvp>;
-    vqmmc-supply = <&vcc2v8_dvp>;
-    status = "okay";
+	bus-width = <4>;
+	disable-wp;
+	max-frequency = <0x2faf080>;
+	keep-power-in-suspend;
+	mmc-pwrseq = <&sdio_pwrseq>;
+	no-mmc;
+	no-sd;
+	cap-sdio-irq;
+	non-removable;
+	cap-sd-highspeed;
+	supports-sdio;
+	supports-rk912;
+	status = "okay";
+    wifi@1 {
+        reg = <1>;
+        interrupt-names = "host-wake";
+        interrupt-parent = <&gpio0>;
+        interrupts = <RK_PA5 IRQ_TYPE_LEVEL_HIGH>;
+        pinctrl-0 = <&wifi_host_wake_l>;
+        pinctrl-names = "default";
+    };
 };
 
 &emmc {
@@ -895,7 +915,10 @@
 			<3 RK_PB5 RK_FUNC_GPIO &pcfg_pull_up>,
 			<3 RK_PB2 RK_FUNC_GPIO &pcfg_pull_up>,
 			<2 RK_PB5 RK_FUNC_GPIO &pcfg_pull_up>,
-			<2 RK_PB6 RK_FUNC_GPIO &pcfg_pull_up>;
+			<2 RK_PB6 RK_FUNC_GPIO &pcfg_pull_up>,
+			<2 RK_PB4 RK_FUNC_GPIO &pcfg_pull_up>,
+			<2 RK_PB7 RK_FUNC_GPIO &pcfg_pull_up>,
+			<2 RK_PC0 RK_FUNC_GPIO &pcfg_pull_up>;
 	};
 
 		btn_pins_vol: btn-pins-vol {
@@ -964,5 +987,13 @@
 				<3 RK_PA7 RK_FUNC_GPIO &pcfg_pull_none>;
 		};
 	};
-
+	sdio-pwrseq {
+		wifi_enable_h: wifi-enable-h {
+			rockchip,pins =
+				<0 RK_PA2 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
+	        wifi_host_wake_l: wifi-host-wake-l {
+	            rockchip,pins = <0 RK_PA5 RK_FUNC_GPIO &pcfg_pull_down>;
+	        };
+	};
 };
