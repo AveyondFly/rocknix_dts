@@ -781,6 +781,15 @@
     status = "okay";
 };
 
+&emmc {
+   		no-sdio;
+		no-sd;
+		disable-wp;
+		non-removable;
+		num-slots = <0x01>; 
+    status = "okay";
+};
+
 &sdio {
     cap-sd-highspeed;
     cd-gpios = <&gpio0 RK_PA2 GPIO_ACTIVE_LOW>; /*[> CD GPIO <]*/
