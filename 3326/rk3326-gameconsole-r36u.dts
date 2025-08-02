@@ -17,8 +17,8 @@
     compatible = "gameconsole,r36u", "rockchip,rk3326";
      
     aliases {
-        mmc0 = &sdmmc;
-	mmc1 = &emmc;
+        mmc1 = &sdmmc;
+	mmc0 = &emmc;
 	mmc2 = &sdio;
     };
 
