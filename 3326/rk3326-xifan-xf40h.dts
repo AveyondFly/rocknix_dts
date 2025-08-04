@@ -13,8 +13,8 @@
 #include "rk3326.dtsi"
 
 / {
-    model = "XiFan R40H";
-    compatible = "xifan,r40h", "rockchip,rk3326";
+    model = "XiFan XF40H";
+    compatible = "xifan,xf40h", "rockchip,rk3326";
      
     aliases {
         mmc1 = &sdmmc;
