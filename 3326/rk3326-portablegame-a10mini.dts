@@ -7,7 +7,7 @@
 #include "rk3326-gameconsole-r3xs.dtsi"
 
 / {
-	model = "Game Console A10Mini";
+	model = "YMC A10Mini";
 	compatible = "gameconsole,a10min", "rockchip,rk3326";
 
        aliases {
@@ -156,17 +156,17 @@
         "G size=52,70 delays=0,0,80,0,20 format=rgb888 lanes=2 flags=0xe03",
 
         "M clock=21000 horizontal=640,48,4,48 vertical=480,10,4,10 default=1",
-        "M clock=21000 horizontal=640,48,34,48 vertical=480,10,46,10",
+        // "M clock=21000 horizontal=640,48,34,48 vertical=480,10,46,10",
         "M clock=21000 horizontal=640,48,14,48 vertical=480,10,60,10",
-        "M clock=23210 horizontal=640,48,9,48 vertical=480,10,123,10",
-        "M clock=22080 horizontal=640,48,14,48 vertical=480,10,12,10",
-        "M clock=23180 horizontal=640,48,22,48 vertical=480,10,12,10",
-        "M clock=23400 horizontal=640,48,34,48 vertical=480,10,7,10",
-        "M clock=22680 horizontal=640,48,14,48 vertical=480,10,4,10",
-        "M clock=27860 horizontal=640,48,19,48 vertical=480,10,114,10",
-        "M clock=33440 horizontal=640,48,15,48 vertical=480,10,90,10",
-        "M clock=34020 horizontal=640,48,14,48 vertical=480,10,4,10",
-        "M clock=45360 horizontal=640,48,14,48 vertical=480,10,4,10",
+        // "M clock=23210 horizontal=640,48,9,48 vertical=480,10,123,10",
+        // "M clock=22080 horizontal=640,48,14,48 vertical=480,10,12,10",
+        // "M clock=23180 horizontal=640,48,22,48 vertical=480,10,12,10",
+        // "M clock=23400 horizontal=640,48,34,48 vertical=480,10,7,10",
+        // "M clock=22680 horizontal=640,48,14,48 vertical=480,10,4,10",
+        // "M clock=27860 horizontal=640,48,19,48 vertical=480,10,114,10",
+        // "M clock=33440 horizontal=640,48,15,48 vertical=480,10,90,10",
+        // "M clock=34020 horizontal=640,48,14,48 vertical=480,10,4,10",
+        // "M clock=45360 horizontal=640,48,14,48 vertical=480,10,4,10",
 
         "I seq=11 wait=200",
         "I seq=36c0",
