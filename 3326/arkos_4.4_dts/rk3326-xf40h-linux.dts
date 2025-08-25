@@ -28,23 +28,20 @@
 		serial5 = "/serial@ff030000";
 	};
 
-	adc_keys: adc-keys {
-		compatible = "adc-keys";
+	vol_keys: rg351-keys {
+		compatible = "rockchip,key";
 		io-channels = <&saradc 2>;
-		io-channel-names = "buttons";
-		keyup-threshold-microvolt = <1800000>;
-		poll-interval = <60>;
 
 		vol-down-key {
-		           label = "VOLUMEDOWN";
-		           linux,code = <KEY_VOLUMEDOWN>;
-			press-threshold-microvolt = <280000>;
+			linux,code = <KEY_VOLUMEDOWN>;
+			label = "volume down";
+			rockchip,adc_value = <166>;
 		};
 
 		vol-up-key {
-		           label = "VOLUMEUP";
-		           linux,code = <KEY_VOLUMEUP>;
-			press-threshold-microvolt = <15000>;
+			linux,code = <KEY_VOLUMEUP>;
+			label = "volume up";
+			rockchip,adc_value = <9>;
 		};
 	};
 
@@ -316,21 +313,19 @@
 			248 249 250 251 252 253 254 255>;
 		default-brightness-level = <200>;
 	};
-
+/*
 	leds: gpio_leds {
 		compatible = "gpio-leds";
 
 		pinctrl-names = "led_pins";
 		pinctrl-0 = <&led_pins>;
 
-		/* Blue LED : GPIO0_C1 */
 		heartbeat {
 			label = "blue:heartbeat";
-			gpios = <&gpio0 RK_PC1 GPIO_ACTIVE_HIGH>;
-			linux,default-trigger = "heartbeat";
+			gpios = <&gpio3 RK_PA7 GPIO_ACTIVE_HIGH>;
+			linux,default-state = "on";
 		};
-	};
-
+	};*/
 	rk817-sound {
 		compatible = "simple-audio-card";
 		simple-audio-card,format = "i2s";
@@ -345,7 +340,6 @@
 			"Headphone Jack", "HPOL",
 			"Headphone Jack", "HPOR";
 		simple-audio-card,hp-det-gpio = <&gpio2 RK_PC6 GPIO_ACTIVE_LOW>;
-		simple-audio-card,spk-ctl-gpio = <&gpio3 RK_PA7 GPIO_ACTIVE_HIGH>;
 
 		simple-audio-card,codec-hp-det = <1>;
 		simple-audio-card,cpu {
@@ -375,6 +369,17 @@
 		};
 	};
 
+	vcc18_audio: vcc_audio {
+		compatible = "regulator-fixed";
+		regulator-name = "vcc_audio";
+		gpio = <&gpio3 RK_PA7 GPIO_ACTIVE_HIGH>;
+		pinctrl-0 = <&led_pins>;
+		pinctrl-names = "default";
+	        enable-active-high;
+	        regulator-always-on;
+	        regulator-boot-on;
+	};
+
     vcc_host: vcc_host {
         compatible = "regulator-fixed";
         regulator-name = "vcc_host";
@@ -386,7 +391,7 @@
         enable-active-high;
         regulator-always-on;
         regulator-boot-on;
-        vin-supply = <&usb_midu>;
+        vin-supply = <&dcdc_boost>;
     };
 
 /*	vcc_host: vcc_host {
@@ -916,13 +921,6 @@
 				regulator-max-microvolt = <5400000>;
 				regulator-name = "boost";
 			};
-		        usb_midu: BOOST {
-		              regulator-name = "usb_midu";
-		              regulator-min-microvolt = <4700000>;
-		              regulator-max-microvolt = <5400000>;
-		              regulator-always-on;
-		              regulator-boot-on;
-		        };
 
 			otg_switch: OTG_SWITCH {
 				regulator-boot-on;
@@ -1220,7 +1218,7 @@
 	};
     vcc18-lcd {
         vcc18_lcd_n: vcc18-lcd-n {
-            rockchip,pins = <3 RK_PB5 RK_FUNC_GPIO &pcfg_pull_none>;
+            rockchip,pins = <0 RK_PB5 RK_FUNC_GPIO &pcfg_pull_none>;
         };
     };
 
@@ -1232,7 +1230,7 @@
 
 	leds {
 		led_pins: led-pins {
-			rockchip,pins = <0 RK_PC1 RK_FUNC_GPIO &pcfg_pull_none>;
+			rockchip,pins = <3 RK_PA7 RK_FUNC_GPIO &pcfg_pull_none>;
 		};
 	};
 	btns {
