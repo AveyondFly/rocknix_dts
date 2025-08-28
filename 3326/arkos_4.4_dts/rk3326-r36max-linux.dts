@@ -16,8 +16,8 @@
 #include "rk3326-linux.dtsi"
 
 / {
-	model = "XiFan XF40H";
-	compatible = "rockchip,rk3326-xf40h-linux", "rockchip,rk3326";
+	model = "XiFan R36Max";
+	compatible = "rockchip,rk3326-r36max-linux", "rockchip,rk3326";
 
 	chosen {
                 bootargs = "";
@@ -313,19 +313,36 @@
 			248 249 250 251 252 253 254 255>;
 		default-brightness-level = <200>;
 	};
-/*
-	leds: gpio_leds {
+	leds: gpio-leds {
 		compatible = "gpio-leds";
-
-		pinctrl-names = "led_pins";
+		pinctrl-names = "default";
 		pinctrl-0 = <&led_pins>;
 
-		heartbeat {
-			label = "blue:heartbeat";
-			gpios = <&gpio3 RK_PA7 GPIO_ACTIVE_HIGH>;
-			linux,default-state = "on";
+		blue_charge: blue-charge {
+			label = "blue:charge";
+			gpios = <&gpio0 RK_PA0 GPIO_ACTIVE_HIGH>;
+			default-state = "off";
 		};
-	};*/
+
+		red_charge: red-charge {
+			label = "red:charge";
+			gpios = <&gpio0 RK_PC1 GPIO_ACTIVE_HIGH>;
+			default-state = "off";
+		};
+
+		blue_work: blue-work {
+			label = "blue:work";
+			gpios = <&gpio0 RK_PB3 GPIO_ACTIVE_HIGH>;
+			default-state = "off";
+		};
+
+		red_work: red-work {
+			label = "red:work";
+			gpios = <&gpio0 RK_PB4 GPIO_ACTIVE_HIGH>;
+			default-state = "off";
+		};
+	};
+
 	rk817-sound {
 		compatible = "simple-audio-card";
 		simple-audio-card,format = "i2s";
@@ -352,10 +369,10 @@
 
 	vccsys: vccsys {
 		compatible = "regulator-fixed";
-		regulator-name = "vcc3v8_sys";
+		regulator-name = "vcc5v0_sys";
 		regulator-always-on;
-		regulator-min-microvolt = <3800000>;
-		regulator-max-microvolt = <3800000>;
+		regulator-min-microvolt = <5000000>;
+		regulator-max-microvolt = <5000000>;
 	};
 	vcc18_lcd0: vcc18_lcd0 {
 		compatible = "regulator-fixed";
@@ -491,28 +508,6 @@
 		opp-microvolt-L1 = <1350000 1350000 1350000>;
 		opp-microvolt-L2 = <1300000 1300000 1350000>;
 		opp-microvolt-L3 = <1250000 1250000 1350000>;
-		clock-latency-ns = <40000>;
-	};
-
-	opp-1416000000 {
-		opp-hz = /bits/ 64 <1416000000>;
-		opp-microvolt     = <1350000 1350000 1350000>;
-		opp-microvolt-L0  = <1350000 1350000 1350000>;
-		opp-microvolt-L1  = <1350000 1350000 1350000>;
-		opp-microvolt-L2  = <1325000 1325000 1350000>;
-		opp-microvolt-L3  = <1300000 1300000 1350000>;
-		opp-microvolt-L4  = <1250000 1250000 1350000>;
-		clock-latency-ns = <40000>;
-	};
-
-	opp-1512000000 {
-		opp-hz = /bits/ 64 <1512000000>;
-		opp-microvolt     = <1350000 1350000 1350000>;
-		opp-microvolt-L0  = <1350000 1350000 1350000>;
-		opp-microvolt-L1  = <1350000 1350000 1350000>;
-		opp-microvolt-L2  = <1350000 1350000 1350000>;
-		opp-microvolt-L3  = <1325000 1325000 1350000>;
-		opp-microvolt-L4  = <1300000 1300000 1350000>;
 		clock-latency-ns = <40000>;
 	};
 };
@@ -926,13 +921,13 @@
 			vcc_wifi: LDO_REG9 {
 				regulator-always-on;
 				regulator-boot-on;
-				regulator-min-microvolt = <3300000>;
-				regulator-max-microvolt = <3300000>;
+				regulator-min-microvolt = <1500000>;
+				regulator-max-microvolt = <1500000>;
 
-				regulator-name = "vcc_wifi";
+				regulator-name = "vdd1v5_dvp";
 				regulator-state-mem {
 					regulator-off-in-suspend;
-					regulator-suspend-microvolt = <3300000>;
+					regulator-suspend-microvolt = <1500000>;
 				};
 			};
 
@@ -1218,8 +1213,7 @@
 		/* ODROID-GO2 : PMIC_INT(GPIO0.PB2) */
 		pmic_int: pmic_int {
 			rockchip,pins =
-				<0 RK_PB2 RK_FUNC_GPIO &pcfg_pull_up>,
-				<0 RK_PB3 RK_FUNC_GPIO &pcfg_pull_none>;
+				<0 RK_PB2 RK_FUNC_GPIO &pcfg_pull_up>;
 		};
 
 		/* ODROID-GO2 : PMIC_SLEEP(GPIO0.PA4) */
@@ -1252,33 +1246,35 @@
 
 	leds {
 		led_pins: led-pins {
-			rockchip,pins = <3 RK_PA7 RK_FUNC_GPIO &pcfg_pull_none>;
+			rockchip,pins =             
+				<0 RK_PA0 RK_FUNC_GPIO &pcfg_pull_none>, /* charge blue  GPIO0_A0 */
+				<0 RK_PC1 RK_FUNC_GPIO &pcfg_pull_none>, /* charge red   GPIO0_C1 */
+				<0 RK_PB3 RK_FUNC_GPIO &pcfg_pull_none>, /* work blue   GPIO0_B3 */
+				<0 RK_PB4 RK_FUNC_GPIO &pcfg_pull_none>; /* work red    GPIO0_B4 */
 		};
 	};
 	btns {
 		btn_pins: btn-pins {
 		rockchip,pins =
-			<3 RK_PC6 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PC7 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PC0 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PC1 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PC2 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PC3 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PC4 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PC5 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PD1 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PB6 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PD0 RK_FUNC_GPIO &pcfg_pull_up>,
 			<3 RK_PB3 RK_FUNC_GPIO &pcfg_pull_up>,
 			<3 RK_PB4 RK_FUNC_GPIO &pcfg_pull_up>,
 			<3 RK_PB5 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PB2 RK_FUNC_GPIO &pcfg_pull_up>,
-			/*<2 RK_PB4 RK_FUNC_GPIO &pcfg_pull_up>,*/
+			<3 RK_PB6 RK_FUNC_GPIO &pcfg_pull_up>,
+			<3 RK_PC0 RK_FUNC_GPIO &pcfg_pull_up_12ma>,
+			<3 RK_PC1 RK_FUNC_GPIO &pcfg_pull_up_12ma>,
+			<3 RK_PC2 RK_FUNC_GPIO &pcfg_pull_up_12ma>,
+			<3 RK_PC3 RK_FUNC_GPIO &pcfg_pull_up_12ma>,
+			<3 RK_PC4 RK_FUNC_GPIO &pcfg_pull_up_12ma>,
+			<3 RK_PC5 RK_FUNC_GPIO &pcfg_pull_up_12ma>,
+			<3 RK_PC6 RK_FUNC_GPIO &pcfg_pull_up_12ma>,
+			<3 RK_PC7 RK_FUNC_GPIO &pcfg_pull_up_12ma>,
+			<3 RK_PD0 RK_FUNC_GPIO &pcfg_pull_up>,
+			<3 RK_PD1 RK_FUNC_GPIO &pcfg_pull_up>,
+			<3 RK_PD2 RK_FUNC_GPIO &pcfg_pull_up>,
+			<3 RK_PD3 RK_FUNC_GPIO &pcfg_pull_up>,
 			<2 RK_PB5 RK_FUNC_GPIO &pcfg_pull_up>,
 			<2 RK_PB6 RK_FUNC_GPIO &pcfg_pull_up>,
-			<2 RK_PB7 RK_FUNC_GPIO &pcfg_pull_up>,
-			<2 RK_PC0 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PA6 RK_FUNC_GPIO &pcfg_pull_down>;
+			<3 RK_PB2 RK_FUNC_GPIO &pcfg_pull_up>;
 		};
 	};
 };

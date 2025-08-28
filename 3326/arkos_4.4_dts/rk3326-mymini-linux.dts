@@ -47,6 +47,14 @@
 		};
 	};
 
+	flow_light {
+		compatible = "flow_light_control";
+		red_led_gpio = <&gpio2 RK_PA5 GPIO_ACTIVE_LOW>;
+		green_led_gpio = <&gpio2 RK_PA5 GPIO_ACTIVE_LOW>;
+		blue_led_gpio = <&gpio2 RK_PA5 GPIO_ACTIVE_LOW>;
+		status = "okay";
+	};
+
 	joypad: odroidgo2-joypad {
                 compatible = "odroidgo2-joypad";
 
@@ -304,6 +312,40 @@
 		default-brightness-level = <200>;
 	};
 
+	leds: gpio-leds {
+		compatible = "gpio-leds";
+		pinctrl-names = "default";
+		pinctrl-0 = <&led_pins>;
+
+		/* 充电蓝灯：GPIO0_A0 (GPIO0_0) */
+		blue_charge: blue-charge {
+			label = "blue:charge";
+			gpios = <&gpio0 RK_PA0 GPIO_ACTIVE_HIGH>;
+			default-state = "off";
+		};
+
+		/* 充电红灯：GPIO0_C1 (GPIO0_17) */
+		red_charge: red-charge {
+			label = "red:charge";
+			gpios = <&gpio0 RK_PC1 GPIO_ACTIVE_HIGH>;
+			default-state = "off";
+		};
+
+		/* 工作蓝灯：GPIO0_B3 (GPIO0_11) */
+		blue_work: blue-work {
+			label = "blue:work";
+			gpios = <&gpio0 RK_PB3 GPIO_ACTIVE_HIGH>;
+			default-state = "off";
+		};
+
+		/* 工作红灯：GPIO0_B4 (GPIO0_12) */
+		red_work: red-work {
+			label = "red:work";
+			gpios = <&gpio0 RK_PB4 GPIO_ACTIVE_HIGH>;
+			default-state = "off";
+		};
+	};
+
 	rk817-sound {
 		compatible = "simple-audio-card";
 		simple-audio-card,format = "i2s";
@@ -330,10 +372,11 @@
 
 	vccsys: vccsys {
 		compatible = "regulator-fixed";
-		regulator-name = "vcc3v8_sys";
+		regulator-name = "vcc5v0_sys";
 		regulator-always-on;
-		regulator-min-microvolt = <3800000>;
-		regulator-max-microvolt = <3800000>;
+		regulator-boot-on;
+		regulator-min-microvolt = <5000000>;
+		regulator-max-microvolt = <5000000>;
 	};
 	vcc18_lcd0: vcc18_lcd0 {
 		compatible = "regulator-fixed";
@@ -889,17 +932,16 @@
 				};
 			};
 
-			/* Rev 1.1 WIFI Power */
 			vcc_wifi: LDO_REG9 {
 				regulator-always-on;
 				regulator-boot-on;
-				regulator-min-microvolt = <3300000>;
-				regulator-max-microvolt = <3300000>;
+				regulator-min-microvolt = <1500000>;
+				regulator-max-microvolt = <1500000>;
 
-				regulator-name = "vcc_wifi";
+				regulator-name = "vdd1v5_dvp";
 				regulator-state-mem {
 					regulator-off-in-suspend;
-					regulator-suspend-microvolt = <3300000>;
+					regulator-suspend-microvolt = <1500000>;
 				};
 			};
 
@@ -1185,8 +1227,7 @@
 		/* ODROID-GO2 : PMIC_INT(GPIO0.PB2) */
 		pmic_int: pmic_int {
 			rockchip,pins =
-				<0 RK_PB2 RK_FUNC_GPIO &pcfg_pull_up>,
-				<0 RK_PB3 RK_FUNC_GPIO &pcfg_pull_none>;
+				<0 RK_PB2 RK_FUNC_GPIO &pcfg_pull_up>;
 		};
 
 		/* ODROID-GO2 : PMIC_SLEEP(GPIO0.PA4) */
@@ -1219,33 +1260,35 @@
 
 	leds {
 		led_pins: led-pins {
-			rockchip,pins = <3 RK_PA7 RK_FUNC_GPIO &pcfg_pull_none>;
+			rockchip,pins =
+				<0 RK_PA0 RK_FUNC_GPIO &pcfg_pull_none>, /* charge blue  GPIO0_A0 */
+				<0 RK_PC1 RK_FUNC_GPIO &pcfg_pull_none>, /* charge red   GPIO0_C1 */
+				<0 RK_PB3 RK_FUNC_GPIO &pcfg_pull_none>, /* work blue    GPIO0_B3 */
+				<0 RK_PB4 RK_FUNC_GPIO &pcfg_pull_none>; /* work red     GPIO0_B4 */
 		};
 	};
 	btns {
 		btn_pins: btn-pins {
 		rockchip,pins =
-			<3 RK_PC6 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PC7 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PC0 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PC1 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PC2 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PC3 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PC4 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PC5 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PD1 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PB6 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PD0 RK_FUNC_GPIO &pcfg_pull_up>,
 			<3 RK_PB3 RK_FUNC_GPIO &pcfg_pull_up>,
 			<3 RK_PB4 RK_FUNC_GPIO &pcfg_pull_up>,
 			<3 RK_PB5 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PB2 RK_FUNC_GPIO &pcfg_pull_up>,
-			/*<2 RK_PB4 RK_FUNC_GPIO &pcfg_pull_up>,*/
+			<3 RK_PB6 RK_FUNC_GPIO &pcfg_pull_up>,
+			<3 RK_PC0 RK_FUNC_GPIO &pcfg_pull_up_12ma>,
+			<3 RK_PC1 RK_FUNC_GPIO &pcfg_pull_up_12ma>,
+			<3 RK_PC2 RK_FUNC_GPIO &pcfg_pull_up_12ma>,
+			<3 RK_PC3 RK_FUNC_GPIO &pcfg_pull_up_12ma>,
+			<3 RK_PC4 RK_FUNC_GPIO &pcfg_pull_up_12ma>,
+			<3 RK_PC5 RK_FUNC_GPIO &pcfg_pull_up_12ma>,
+			<3 RK_PC6 RK_FUNC_GPIO &pcfg_pull_up_12ma>,
+			<3 RK_PC7 RK_FUNC_GPIO &pcfg_pull_up_12ma>,
+			<3 RK_PD0 RK_FUNC_GPIO &pcfg_pull_up>,
+			<3 RK_PD1 RK_FUNC_GPIO &pcfg_pull_up>,
+			<3 RK_PD2 RK_FUNC_GPIO &pcfg_pull_up>,
+			<3 RK_PD3 RK_FUNC_GPIO &pcfg_pull_up>,
 			<2 RK_PB5 RK_FUNC_GPIO &pcfg_pull_up>,
 			<2 RK_PB6 RK_FUNC_GPIO &pcfg_pull_up>,
-			<2 RK_PB7 RK_FUNC_GPIO &pcfg_pull_up>,
-			<2 RK_PC0 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PA6 RK_FUNC_GPIO &pcfg_pull_down>;
+			<3 RK_PB2 RK_FUNC_GPIO &pcfg_pull_up>;
 		};
 	};
 	btn_pins_vol: btn-pins-vol {
