@@ -107,7 +107,7 @@
 		amux-b-gpios = <&gpio2 RK_PB7 GPIO_ACTIVE_HIGH>;
 		/* adc mux enable gpio */
 		amux-en-gpios = <&gpio2 RK_PB3 GPIO_ACTIVE_LOW>;
-
+		rumble-gpio = <&gpio3 RK_PA6 GPIO_ACTIVE_HIGH>;
 		/* adc calculate scale */
 		button-adc-scale = <2>;
 
@@ -313,19 +313,37 @@
 			248 249 250 251 252 253 254 255>;
 		default-brightness-level = <200>;
 	};
-/*
-	leds: gpio_leds {
-		compatible = "gpio-leds";
 
-		pinctrl-names = "led_pins";
+	leds: gpio-leds {
+		compatible = "gpio-leds";
+		pinctrl-names = "default";
 		pinctrl-0 = <&led_pins>;
 
-		heartbeat {
-			label = "blue:heartbeat";
-			gpios = <&gpio3 RK_PA7 GPIO_ACTIVE_HIGH>;
-			linux,default-state = "on";
+		blue_charge: blue-charge {
+			label = "blue:charge";
+			gpios = <&gpio0 RK_PA0 GPIO_ACTIVE_HIGH>;
+			default-state = "off";
 		};
-	};*/
+
+		red_charge: red-charge {
+			label = "red:charge";
+			gpios = <&gpio0 RK_PC1 GPIO_ACTIVE_HIGH>;
+			default-state = "off";
+		};
+
+		blue_work: blue-work {
+			label = "blue:work";
+			gpios = <&gpio0 RK_PB3 GPIO_ACTIVE_HIGH>;
+			default-state = "off";
+		};
+
+		red_work: red-work {
+			label = "red:work";
+			gpios = <&gpio0 RK_PB4 GPIO_ACTIVE_HIGH>;
+			default-state = "off";
+		};
+	};
+
 	rk817-sound {
 		compatible = "simple-audio-card";
 		simple-audio-card,format = "i2s";
@@ -354,6 +372,7 @@
 		compatible = "regulator-fixed";
 		regulator-name = "vcc3v8_sys";
 		regulator-always-on;
+		regulator-boot-on;
 		regulator-min-microvolt = <3800000>;
 		regulator-max-microvolt = <3800000>;
 	};
@@ -534,7 +553,7 @@
 		power-supply = <&vcc18_lcd0>;
 		/* LCD reset gpio GPIO3.C0 */
 	        reset-gpios = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
-		enable-gpios = <&gpio0 RK_PB5 GPIO_ACTIVE_HIGH>;
+			enable-gpios = <&gpio0 RK_PB5 GPIO_ACTIVE_HIGH>;
 			prepare-delay-ms = <0x140>;
 			reset-delay-ms = <0x240>;
 			init-delay-ms = <0x140>;
@@ -1217,8 +1236,7 @@
 		/* ODROID-GO2 : PMIC_INT(GPIO0.PB2) */
 		pmic_int: pmic_int {
 			rockchip,pins =
-				<0 RK_PB2 RK_FUNC_GPIO &pcfg_pull_up>,
-				<0 RK_PB3 RK_FUNC_GPIO &pcfg_pull_none>;
+				<0 RK_PB2 RK_FUNC_GPIO &pcfg_pull_up>;
 		};
 
 		/* ODROID-GO2 : PMIC_SLEEP(GPIO0.PA4) */
@@ -1251,7 +1269,11 @@
 
 	leds {
 		led_pins: led-pins {
-			rockchip,pins = <3 RK_PA7 RK_FUNC_GPIO &pcfg_pull_none>;
+			rockchip,pins =             
+				<0 RK_PA0 RK_FUNC_GPIO &pcfg_pull_none>, /* charge blue  GPIO0_A0 */
+				<0 RK_PC1 RK_FUNC_GPIO &pcfg_pull_none>, /* charge red   GPIO0_C1 */
+				<0 RK_PB3 RK_FUNC_GPIO &pcfg_pull_none>, /* work blue   GPIO0_B3 */
+				<0 RK_PB4 RK_FUNC_GPIO &pcfg_pull_none>; /* work red    GPIO0_B4 */
 		};
 	};
 	btns {

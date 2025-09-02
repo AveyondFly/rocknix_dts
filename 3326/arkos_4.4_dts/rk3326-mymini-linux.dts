@@ -1088,6 +1088,7 @@
 
 &route_dsi {
 	connect = <&vopb_out_dsi>;
+
 	status = "okay";
 };
 
@@ -1141,13 +1142,14 @@
 	supports-sd;
 	card-detect-delay = <800>;
 	ignore-pm-notify;
+	cd-gpios = <&gpio0 RK_PA2 GPIO_ACTIVE_LOW>;
 	sd-uhs-sdr12;
 	sd-uhs-sdr25;
 	sd-uhs-sdr50;
 	sd-uhs-sdr104;
 	vqmmc-supply = <&vccio_sd>;
 	vmmc-supply = <&vcc_sd>;
-	status = "disabled";
+	status = "okay";
 };
 
 &tsadc {
