@@ -772,6 +772,8 @@
 };
 
 &sdio {
+    #address-cells = <1>;
+    #size-cells = <0>;
 	bus-width = <4>;
 	disable-wp;
 	max-frequency = <0x2faf080>;
