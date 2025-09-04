@@ -38,22 +38,55 @@
 		status = "okay";
 	};
 
-	leds: gpio_leds {
+	leds: gpio-leds {
 		compatible = "gpio-leds";
-		status = "okay";
+		pinctrl-names = "default";
+		pinctrl-0 = <&led_pins>;
 
-		/* Blue LED : GPIO0_C1 */
-		heartbeat {
-			label = "blue:heartbeat";
+		/* 充电蓝灯：GPIO0_A0 (GPIO0_0) */
+		blue_charge: blue-charge {
+			label = "blue:charge";
+			gpios = <&gpio0 RK_PA0 GPIO_ACTIVE_HIGH>;
+			default-state = "off";
+		};
+
+		/* 充电红灯：GPIO0_C1 (GPIO0_17) */
+		red_charge: red-charge {
+			label = "red:charge";
 			gpios = <&gpio0 RK_PC1 GPIO_ACTIVE_HIGH>;
 			default-state = "off";
 		};
 
-		battery {
-			label = "battery_low";
-			gpios = <&gpio3 RK_PA5 GPIO_ACTIVE_LOW>;
-			default-state = "on";
+		/* 工作蓝灯：GPIO0_B3 (GPIO0_11) */
+		blue_work: blue-work {
+			label = "blue:work";
+			gpios = <&gpio0 RK_PB3 GPIO_ACTIVE_HIGH>;
+			default-state = "off";
 		};
+
+		/* 工作红灯：GPIO0_B4 (GPIO0_12) */
+		red_work: red-work {
+			label = "red:work";
+			gpios = <&gpio0 RK_PB4 GPIO_ACTIVE_HIGH>;
+			default-state = "off";
+		};
+
+		joy_green: joy-green {
+			label = "green:joy";
+			gpios = <&gpio2 RK_PA6 GPIO_ACTIVE_HIGH>;
+			default-state = "off";
+        };
+
+        joy_red: joy-red {
+			label = "red:joy";
+			gpios = <&gpio2 RK_PA5 GPIO_ACTIVE_HIGH>;
+			default-state = "off";
+        };
+        joy_blue: joy-blue {
+			label = "blue:joy";
+			gpios = <&gpio2 RK_PA7 GPIO_ACTIVE_HIGH>;
+			default-state = "off";
+        };
 	};
 
 	backlight: backlight {
@@ -783,6 +816,19 @@
             rockchip,pins = <0 RK_PB5 RK_FUNC_GPIO &pcfg_pull_none>;
         };
     };
+
+	leds {
+		led_pins: led-pins {
+			rockchip,pins =
+				<0 RK_PA0 RK_FUNC_GPIO &pcfg_pull_none>, /* charge blue  GPIO0_A0 */
+				<0 RK_PC1 RK_FUNC_GPIO &pcfg_pull_none>, /* charge red   GPIO0_C1 */
+				<0 RK_PB3 RK_FUNC_GPIO &pcfg_pull_none>, /* work blue    GPIO0_B3 */
+				<0 RK_PB4 RK_FUNC_GPIO &pcfg_pull_none>, /* work red     GPIO0_B4 */
+				<2 RK_PA5 RK_FUNC_GPIO &pcfg_pull_none>,
+                <2 RK_PA6 RK_FUNC_GPIO &pcfg_pull_none>,
+                <2 RK_PA7 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
+	};
 
 	
 	btns {
