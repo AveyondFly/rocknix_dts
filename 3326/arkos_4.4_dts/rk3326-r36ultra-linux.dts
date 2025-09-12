@@ -26,6 +26,10 @@
 	aliases {
 		serial0 = "/serial@ff178000";
 		serial5 = "/serial@ff030000";
+		mmc0 = &sdmmc;   /* ff370000：外置 microSD */
+		mmc1 = &sdio;   /* ff380000：SDIO Wi-Fi */
+		mmc2 = &emmc;   /* ff390000：eMMC */
+		
 	};
 
 	vol_keys: rg351-keys {
@@ -648,9 +652,58 @@
 	};
 };
 
+// &emmc {
+// 	no-sdio;
+// 	no-sd;
+// 	disable-wp;
+// 	cap-mmc-highspeed;
+// 	non-removable;
+// 	bus-width = <0x08>;
+// 	fifo-depth = <0x100>;
+// 	max-frequency = <0x8f0d180>;
+// 	num-slots = <0x01>; 
+// 	status = "okay";
+// };
+
 &emmc {
-	status = "disabled";
+    compatible = "rockchip,px30-dw-mshc", "rockchip,rk3288-dw-mshc";
+    status = "okay";
+
+    /* 功能属性 */
+    bus-width = <8>;
+    non-removable;
+    disable-wp;
+    no-sd;
+    no-sdio;
+    supports-emmc;
+    cap-mmc-highspeed;
+    /* 先别开 HS200/HS400，跑通再说 */
+    /* mmc-hs200-1_8v; */
+    /* mmc-hs400-1_8v; */
+
+    /* 时钟（注意名字与顺序！） */
+    clock-names = "biu", "ciu";
+    clocks = <&cru HCLK_EMMC>, <&cru SCLK_EMMC>;
+
+    /* 供电——用板上已有 regulator */
+    vmmc-supply  = <&vcc_3v0>;
+    vqmmc-supply = <&vcc1v8_soc>;
+
+    /* 引脚复用 */
+    pinctrl-names = "default";
+    pinctrl-0 = <
+        &emmc_clk
+        &emmc_cmd
+        &emmc_bus8
+        &emmc_pwren
+        &emmc_rstnout
+    >;
+
+    fifo-depth = <0x100>;
+    max-frequency = <0x8f0d180>;  /* 150MHz */
+    num-slots = <1>;
 };
+
 
 &gpu {
 	mali-supply = <&vdd_logic>;
@@ -1251,6 +1304,44 @@
 };
 
 &pinctrl {
+
+	pcfg_pull_up_8_6ma: pcfg-pull-up-8-6ma  {
+		bias-pull-up;
+		drive-strength = <0x08>;
+		drive-strength-s = <0x06>;
+	};
+
+	pcfg_pull_none_8_6ma: pcfg-pull-none-8-6ma {
+		bias-disable;
+		drive-strength = <0x08>;
+		drive-strength-s = <0x06>;
+	};
+
+	emmc {
+        emmc_clk: emmc-clk {
+            rockchip,pins = <1 RK_PB1 0x02 &pcfg_pull_none_8_6ma>;
+        };
+        emmc_cmd: emmc-cmd {
+            rockchip,pins = <1 RK_PB2 0x02 &pcfg_pull_up_8_6ma>;
+        };
+        emmc_bus8: emmc-bus8 {
+            rockchip,pins = 
+			<1 RK_PA0 0x02 &pcfg_pull_up_8_6ma>,
+			<1 RK_PA1 0x02 &pcfg_pull_up_8_6ma>,
+			<1 RK_PA2 0x02 &pcfg_pull_up_8_6ma>,
+			<1 RK_PA3 0x02 &pcfg_pull_up_8_6ma>,
+			<1 RK_PA4 0x02 &pcfg_pull_up_8_6ma>,
+			<1 RK_PA5 0x02 &pcfg_pull_up_8_6ma>,
+			<1 RK_PA6 0x02 &pcfg_pull_up_8_6ma>,
+			<1 RK_PA7 0x02 &pcfg_pull_up_8_6ma>;
+        };
+        emmc_pwren: emmc-pwren {
+            rockchip,pins = <1 0x08 0x02 0xb8>;
+        };
+        emmc_rstnout: emmc-rstnout {
+            rockchip,pins = <1 0x0b 0x02 0xb8>;
+        };
+    };
 
 	pmic {
 		/* ODROID-GO2 : PMIC_INT(GPIO0.PB2) */
