@@ -984,9 +984,9 @@
 
 		battery {
 			compatible = "rk817,battery";
-			ocv_table = <3165 3220 3280 3330 3380 3430 3480
-			3530 3580 3630 3670 3710 3750 3790
-			3830 3870 3910 3950 3990 3995 4000>;
+			ocv_table = <3500 3521 3546 3565 3580 3592 
+			3602 3615 3630 3657 3689 3714 3743 3776 
+			3812 3853 3897 3946 4001 4069 4180>;
 
 
 			/* KPL605475 Battery Spec */
@@ -1000,12 +1000,13 @@
 				Sample resister : 10 mohm
 			*/
 			design_capacity = <3380>;
-			design_qmax = <3718>;
-			bat_res = <100>;
+			design_capacity = <2832>;
+			design_qmax = <3115>;
+			bat_res = <150>;
 			sleep_enter_current = <300>;
 			sleep_exit_current = <300>;
 			sleep_filter_current = <100>;
-			power_off_thresd = <3000>;
+			power_off_thresd = <3500>;
 			zero_algorithm_vol = <3850>;
 			max_soc_offset = <60>;
 			monitor_sec = <5>;

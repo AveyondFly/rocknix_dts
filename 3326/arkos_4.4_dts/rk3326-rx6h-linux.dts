@@ -16,8 +16,8 @@
 #include "rk3326-linux.dtsi"
 
 / {
-	model = "XiFan R36Pro";
-	compatible = "rockchip,rk3326-xf36pro-linux", "rockchip,rk3326";
+	model = "HG36";
+	compatible = "rockchip,rk3326-hg36-linux", "rockchip,rk3326";
 
 	chosen {
                 bootargs = "";
@@ -47,6 +47,11 @@
 			rockchip,adc_value = <9>;
 		};
 	};
+	system_leds: system-leds {
+		compatible = "system_leds";
+		pwms = <&pwm0 0 25000 0>;
+		status = "okay";
+	};
 
 	joypad: odroidgo3-joypad {
                 compatible = "odroidgo3-joypad";
@@ -57,8 +62,8 @@
                 rumble-boost-strong = <0x0000>;
 
                 joypad-name = "GO-Super Gamepad";
-                joypad-product = <0x1101>;
-                joypad-revision = <0x0100>;
+				joypad-product = <0x1188>;
+				joypad-revision = <0x0188>;
 				joypad-vendor = <0x484B>;
 		status = "okay";
                 /*
@@ -106,10 +111,10 @@
 		amux-count = <4>;
 		amux-channel-mapping = <2 3 1 0>;
 		/* adc mux select(a,b) gpio */
-		amux-a-gpios = <&gpio2 RK_PC0 GPIO_ACTIVE_LOW>;
-		amux-b-gpios = <&gpio2 RK_PB7 GPIO_ACTIVE_HIGH>;
-		/* adc mux enable gpio */
-		amux-en-gpios = <&gpio2 RK_PB3 GPIO_ACTIVE_LOW>;
+        amux-en-gpios = <&gpio2 RK_PB4 GPIO_ACTIVE_LOW>;   /* rocker0-gpios */
+        /* adc mux select(a,b) gpio */
+        amux-a-gpios = <&gpio2 RK_PC0 GPIO_ACTIVE_LOW>;     /* rocker1-gpios */
+        amux-b-gpios = <&gpio2 RK_PB7 GPIO_ACTIVE_LOW>;     /* rocker-gpios */
 
 		/* adc calculate scale */
 		button-adc-scale = <2>;
@@ -145,8 +150,8 @@
 		poll-interval = <10>;
 
 		/* required for RG351MP */
-		invert-absx;
-		invert-absy;
+		invert-absrx;
+		invert-absry;
 		sw1 {
 			gpios = <&gpio3 RK_PC6 GPIO_ACTIVE_LOW>;
 			label = "GPIO DPAD-UP";
@@ -316,6 +321,7 @@
 			248 249 250 251 252 253 254 255>;
 		default-brightness-level = <200>;
 	};
+
  	leds: gpio_leds {
         compatible = "gpio-leds";
         pinctrl-names = "led_pins";
@@ -332,20 +338,6 @@
         red_charge: red-charge {
             label = "red:charge";
             gpios = <&gpio0 RK_PC1 GPIO_ACTIVE_HIGH>;
-            default-state = "off";
-        };
-
-        /* 工作蓝灯：GPIO0_B3 (GPIO0_11) */
-        blue_work: blue-work {
-            label = "blue:work";
-            gpios = <&gpio0 RK_PB3 GPIO_ACTIVE_HIGH>;
-            default-state = "off";
-        };
-
-        /* 工作红灯：GPIO0_B4 (GPIO0_12) */
-        red_work: red-work {
-            label = "red:work";
-            gpios = <&gpio0 RK_PB4 GPIO_ACTIVE_HIGH>;
             default-state = "off";
         };
     };
@@ -559,18 +551,18 @@
 		/* LCD reset gpio GPIO3.C0 */
 	        reset-gpios = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
 			enable-gpios = <&gpio0 RK_PB5 GPIO_ACTIVE_HIGH>;
-			prepare-delay-ms = <0x140>;
-			reset-delay-ms = <0x240>;
-			init-delay-ms = <0x140>;
-			enable-delay-ms = <0x140>;
-			disable-delay-ms = <0x140>;
+			prepare-delay-ms = <0x14>;
+			reset-delay-ms = <0x14>;
+			init-delay-ms = <0x14>;
+			enable-delay-ms = <0x78>;
+			disable-delay-ms = <0x14>;
 			unprepare-delay-ms = <0x14>;
 			width-mm = <0x99>;
 			height-mm = <0x55>;
 			dsi,flags = <0xa03>;
 			dsi,format = <0x00>;
 			dsi,lanes = <0x04>;
-			panel-init-sequence = [39 00 04 b9 f1 12 83 39 00 06 b1 00 00 00 da 80 39 00 04 b2 00 13 70 39 00 0b b3 10 10 28 28 03 ff 00 00 00 00 15 00 02 b4 80 15 00 03 b5 0a 0a 15 00 03 b6 82 82 39 00 05 b8 26 62 f0 63 39 00 1c ba 33 81 05 f9 0e 0e 20 00 00 00 00 00 00 00 44 25 00 90 0a 00 00 01 4f 01 00 00 37 15 00 02 bc 47 39 00 04 bf 02 11 00 39 00 0a c0 73 73 50 50 00 00 12 50 00 39 00 0d c1 53 00 32 32 77 d1 cc cc 77 77 33 33 39 00 07 c6 82 00 bf ff 00 ff 39 00 07 c7 b8 00 0a 00 00 00 39 00 05 c8 10 40 1e 02 15 00 02 cc 0b 39 00 23 e0 00 07 0d 37 35 3f 41 44 06 0c 0d 0f 11 10 12 14 1a 00 07 0d 37 35 3f 41 44 06 0c 0d 0f 11 10 12 14 1a 39 00 0f e3 07 07 0b 0b 0b 0b 00 00 00 00 ff 00 c0 10 39 00 40 e9 c8 10 02 00 00 b0 b1 11 31 23 28 80 b0 b1 27 08 00 04 02 00 00 00 00 04 02 00 00 00 88 88 ba 60 24 08 88 88 88 88 88 88 88 ba 71 35 18 88 88 88 88 88 00 00 00 01 00 00 00 00 00 00 00 00 00 39 00 3e ea 97 0a 82 02 03 07 00 00 00 00 00 00 81 88 ba 17 53 88 88 88 88 88 88 80 88 ba 06 42 88 88 88 88 88 88 23 00 00 02 80 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 39 00 04 ef ff ff 01 05 c8 01 11 05 14 01 29];
+			panel-init-sequence = [15 00 02 ff 30 15 00 02 ff 52 15 00 02 ff 01 15 00 02 e3 00 15 00 02 25 10 15 00 02 28 6f 15 00 02 29 01 15 00 02 2a df 15 00 02 2c 22 15 00 02 c3 0f 15 00 02 37 9c 15 00 02 38 a7 15 00 02 39 41 15 00 02 80 20 15 00 02 91 67 15 00 02 92 67 15 00 02 a0 55 15 00 02 a1 50 15 00 02 a3 58 15 00 02 a4 9c 15 00 02 a7 02 15 00 02 a8 01 15 00 02 a9 21 15 00 02 aa fc 15 00 02 ab 28 15 00 02 ac 06 15 00 02 ad 06 15 00 02 ae 06 15 00 02 af 03 15 00 02 b0 08 15 00 02 b1 26 15 00 02 b2 28 15 00 02 b3 28 15 00 02 b4 03 15 00 02 b5 08 15 00 02 b6 26 15 00 02 b7 08 15 00 02 b8 26 15 00 02 c0 00 15 00 02 c1 00 15 00 02 c2 00 15 00 02 ff 30 15 00 02 ff 52 15 00 02 ff 02 15 00 02 b0 02 15 00 02 d0 02 15 00 02 b1 0f 15 00 02 d1 10 15 00 02 b2 11 15 00 02 d2 12 15 00 02 b3 32 15 00 02 d3 33 15 00 02 b4 36 15 00 02 d4 36 15 00 02 b5 3c 15 00 02 d5 3c 15 00 02 b6 20 15 00 02 d6 20 15 00 02 b7 3e 15 00 02 d7 3e 15 00 02 b8 0e 15 00 02 d8 0d 15 00 02 b9 05 15 00 02 d9 05 15 00 02 ba 11 15 00 02 da 12 15 00 02 bb 11 15 00 02 db 11 15 00 02 bc 13 15 00 02 dc 14 15 00 02 bd 14 15 00 02 dd 14 15 00 02 be 16 15 00 02 de 18 15 00 02 bf 0e 15 00 02 df 0f 15 00 02 c0 17 15 00 02 e0 17 15 00 02 c1 07 15 00 02 e1 08 15 00 02 ff 30 15 00 02 ff 52 15 00 02 ff 03 15 00 02 08 8a 15 00 02 09 8b 15 00 02 30 00 15 00 02 31 00 15 00 02 32 00 15 00 02 33 00 15 00 02 34 61 15 00 02 35 d4 15 00 02 36 24 15 00 02 37 03 15 00 02 40 86 15 00 02 41 87 15 00 02 42 84 15 00 02 43 85 15 00 02 44 11 15 00 02 45 de 15 00 02 46 dd 15 00 02 47 11 15 00 02 48 e0 15 00 02 49 df 15 00 02 50 82 15 00 02 51 83 15 00 02 52 80 15 00 02 53 81 15 00 02 54 11 15 00 02 55 e2 15 00 02 56 e1 15 00 02 57 11 15 00 02 58 e4 15 00 02 59 e3 15 00 02 82 0f 15 00 02 83 0f 15 00 02 84 00 15 00 02 85 0f 15 00 02 86 0f 15 00 02 87 0e 15 00 02 88 0e 15 00 02 89 06 15 00 02 8a 06 15 00 02 8b 07 15 00 02 8c 07 15 00 02 8d 04 15 00 02 8e 04 15 00 02 8f 05 15 00 02 90 05 15 00 02 98 0f 15 00 02 99 0f 15 00 02 9a 00 15 00 02 9b 0f 15 00 02 9c 0f 15 00 02 9d 0e 15 00 02 9e 0e 15 00 02 9f 06 15 00 02 a0 06 15 00 02 a1 07 15 00 02 a2 07 15 00 02 a3 04 15 00 02 a4 04 15 00 02 a5 05 15 00 02 a6 05 15 00 02 e0 02 15 00 02 e1 52 15 00 02 ff 30 15 00 02 ff 52 15 00 02 ff 00 15 00 02 36 02 05 c8 01 11 05 64 01 29];
 			panel-exit-sequence = <0x5000128 0x5000110>;
 
 		display-timings {
@@ -580,12 +572,12 @@
 					clock-frequency = <0x1c9c380>;
 					hactive = <0x280>;
 					vactive = <0x1e0>;
-					hfront-porch = <0x96>;
-					hsync-len = <0x32>;
-					hback-porch = <0x96>;
-					vfront-porch = <0x14>;
-					vsync-len = <0x06>;
-					vback-porch = <0x0c>;
+					hfront-porch = <0x2e>;
+					hsync-len = <0x02>;
+					hback-porch = <0x2c>;
+					vfront-porch = <0x10>;
+					vsync-len = <0x02>;
+					vback-porch = <0x0e>;
 					hsync-active = <0x00>;
 					vsync-active = <0x00>;
 					de-active = <0x00>;
@@ -997,7 +989,7 @@
 			dcdc_boost: BOOST {
 				regulator-always-on;
 				regulator-boot-on;
-				regulator-min-microvolt = <4700000>;
+				regulator-min-microvolt = <5000000>;
 				regulator-max-microvolt = <5400000>;
 				regulator-name = "boost";
 			};
@@ -1010,9 +1002,9 @@
 
 		battery {
 			compatible = "rk817,battery";
-			ocv_table = <3500 3564 3679 3747 3787 3815 3834 
-			3847 3856 3861 3873 3920 3983 4010 
-			4017 4019 4021 4022 4028 4056 4161>;
+			ocv_table = <3400 3656 3677 3700 3726 3743
+			3762 3778 3793 3811 3834 3862 3908
+			3957 3990 4049 4092 4143 4196 4251 4311>;
 
 
 			/* KPL605475 Battery Spec */
@@ -1025,9 +1017,9 @@
 				Charging Voltage Max : 4.25V
 				Sample resister : 10 mohm
 			*/
-			design_capacity = <1848>;
-			design_qmax = <2033>;
-			bat_res = <154>;
+			design_capacity = <3145>;
+			design_qmax = <3459>;
+			bat_res = <150>;
 			sleep_enter_current = <300>;
 			sleep_exit_current = <300>;
 			sleep_filter_current = <100>;
@@ -1272,7 +1264,7 @@
 };
 
 &pinctrl {
-	
+
 	pcfg_pull_up_8_6ma: pcfg-pull-up-8-6ma  {
 		bias-pull-up;
 		drive-strength = <0x08>;
@@ -1351,9 +1343,7 @@
 		led_pins: led-pins {
 			rockchip,pins =
 				<0 RK_PA0 RK_FUNC_GPIO &pcfg_pull_none>, /* charge blue  */
-				<0 RK_PC1 RK_FUNC_GPIO &pcfg_pull_none>, /* charge red   */
-				<0 RK_PB3 RK_FUNC_GPIO &pcfg_pull_none>, /* work blue    */
-				<0 RK_PB4 RK_FUNC_GPIO &pcfg_pull_none>; /* work red     */
+				<0 RK_PC1 RK_FUNC_GPIO &pcfg_pull_none>; /* charge red   */
 		};
 	};
 	btns {
