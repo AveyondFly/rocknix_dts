@@ -1063,8 +1063,8 @@
 			zero_algorithm_vol = <3850>;
 			max_soc_offset = <60>;
 			monitor_sec = <5>;
-			virtual_power = <0>;
 			sample_res = <10>;
+			virtual_power = <0>;
 			power_dc2otg = <0>;
 		};
 
