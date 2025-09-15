@@ -26,6 +26,9 @@
 	aliases {
 		serial0 = "/serial@ff178000";
 		serial5 = "/serial@ff030000";
+		mmc0 = &sdmmc;   /* ff370000：外置 microSD */
+		mmc1 = &sdio;   /* ff380000：SDIO Wi-Fi */
+		mmc2 = &emmc;   /* ff390000：eMMC */
 	};
 
 	vol_keys: rg351-keys {
@@ -54,8 +57,8 @@
                 rumble-boost-strong = <0x0000>;
 
                 joypad-name = "GO-Super Gamepad";
-				joypad-product = <0x1101>;
-				joypad-revision = <0x0100>;
+                joypad-product = <0x1100>;
+                joypad-revision = <0x0100>;
 
 		status = "okay";
                 /*
@@ -376,15 +379,15 @@
 		regulator-min-microvolt = <5000000>;
 		regulator-max-microvolt = <5000000>;
 	};
-
+	
 	wireless-wlan {
 		compatible = "wlan-platdata";
 		wifi_chip_type = "rk915";
-		WIFI,poweren_gpio = <&gpio0 RK_PA2 GPIO_ACTIVE_HIGH>;
-		WIFI,host_wake_irq = <&gpio0 RK_PA1 GPIO_ACTIVE_HIGH>;
+		WIFI,host_wake_irq = <&gpio0 RK_PA1 GPIO_ACTIVE_HIGH>; 
+		WIFI,poweren_gpio = <&gpio0 RK_PA2 GPIO_ACTIVE_HIGH>; 
 		status = "okay";
 	};
-	
+
 	vcc18_lcd0: vcc18_lcd0 {
 		compatible = "regulator-fixed";
 		regulator-name = "vcc18_lcd0_n";
@@ -644,7 +647,42 @@
 };
 
 &emmc {
-	status = "disabled";
+    compatible = "rockchip,px30-dw-mshc", "rockchip,rk3288-dw-mshc";
+    status = "okay";
+
+    /* 功能属性 */
+    bus-width = <8>;
+    non-removable;
+    disable-wp;
+    no-sd;
+    no-sdio;
+    supports-emmc;
+    cap-mmc-highspeed;
+    /* 先别开 HS200/HS400，跑通再说 */
+    /* mmc-hs200-1_8v; */
+    /* mmc-hs400-1_8v; */
+
+    /* 时钟（注意名字与顺序！） */
+    clock-names = "biu", "ciu";
+    clocks = <&cru HCLK_EMMC>, <&cru SCLK_EMMC>;
+
+    /* 供电——用板上已有 regulator */
+    vmmc-supply  = <&vcc_3v0>;
+    vqmmc-supply = <&vcc1v8_soc>;
+
+    /* 引脚复用 */
+    pinctrl-names = "default";
+    pinctrl-0 = <
+        &emmc_clk
+        &emmc_cmd
+        &emmc_bus8
+        &emmc_pwren
+        &emmc_rstnout
+    >;
+
+    fifo-depth = <0x100>;
+    max-frequency = <0x8f0d180>;  /* 150MHz */
+    num-slots = <1>;
 };
 
 &gpu {
@@ -966,7 +1004,7 @@
 			dcdc_boost: BOOST {
 				regulator-always-on;
 				regulator-boot-on;
-				regulator-min-microvolt = <4700000>;
+				regulator-min-microvolt = <5000000>;
 				regulator-max-microvolt = <5400000>;
 				regulator-name = "boost";
 			};
@@ -1154,19 +1192,19 @@
 };
 
 &sdio {
+	#address-cells = <1>;
+    #size-cells = <0>;
 	bus-width = <4>;
-	cap-mmc-highspeed;
 	cap-sd-highspeed;
-	supports-sd;
-	card-detect-delay = <800>;
+	supports-rk912;
+	supports-sdio;
+	pinctrl-0 = <&sdio_bus4 &sdio_cmd &sdio_clk>;
+	no-sd;
+	no-mmc;
 	ignore-pm-notify;
-	sd-uhs-sdr12;
-	sd-uhs-sdr25;
-	sd-uhs-sdr50;
-	sd-uhs-sdr104;
-	vqmmc-supply = <&vccio_sd>;
-	vmmc-supply = <&vcc_sd>;
-	status = "disabled";
+	keep-power-in-suspend;
+	status = "okay";
+	pinctrl-names = "default";
 };
 
 &tsadc {
@@ -1202,13 +1240,31 @@
 	status = "disabled";
 };
 
+&spi1 {
+    status = "okay";
+    spi_dev@0 {
+        compatible = "rockchip,spidev";
+        reg = <0x00>;
+        spi-max-frequency = <0x7a1200>;
+	status = "okay";
+    };
+};
+
+
 &uart0 {
 	status = "disabled";
 };
 
 &uart2 {
-	status = "disabled";
+    status = "okay";
+    dma-names = "tx";
+    pinctrl-0 = <&uart2m1_xfer>;
 };
+
+&uart2m1_xfer {
+	    rockchip,pins = <2 RK_PB4 2 &pcfg_pull_up>;
+};
+
 
 &uart3 {
 	status = "disabled";
@@ -1241,12 +1297,43 @@
 
 &pinctrl {
 
-	headphone {
-
-		hp_det: hp-det {
-			rockchip,pins = <2 RK_PC6 RK_FUNC_GPIO &pcfg_pull_up>;
-		};
+	pcfg_pull_up_8_6ma: pcfg-pull-up-8-6ma  {
+		bias-pull-up;
+		drive-strength = <0x08>;
+		drive-strength-s = <0x06>;
 	};
+
+	pcfg_pull_none_8_6ma: pcfg-pull-none-8-6ma {
+		bias-disable;
+		drive-strength = <0x08>;
+		drive-strength-s = <0x06>;
+	};
+
+	emmc {
+        emmc_clk: emmc-clk {
+            rockchip,pins = <1 RK_PB1 0x02 &pcfg_pull_none_8_6ma>;
+        };
+        emmc_cmd: emmc-cmd {
+            rockchip,pins = <1 RK_PB2 0x02 &pcfg_pull_up_8_6ma>;
+        };
+        emmc_bus8: emmc-bus8 {
+            rockchip,pins = 
+			<1 RK_PA0 0x02 &pcfg_pull_up_8_6ma>,
+			<1 RK_PA1 0x02 &pcfg_pull_up_8_6ma>,
+			<1 RK_PA2 0x02 &pcfg_pull_up_8_6ma>,
+			<1 RK_PA3 0x02 &pcfg_pull_up_8_6ma>,
+			<1 RK_PA4 0x02 &pcfg_pull_up_8_6ma>,
+			<1 RK_PA5 0x02 &pcfg_pull_up_8_6ma>,
+			<1 RK_PA6 0x02 &pcfg_pull_up_8_6ma>,
+			<1 RK_PA7 0x02 &pcfg_pull_up_8_6ma>;
+        };
+        emmc_pwren: emmc-pwren {
+            rockchip,pins = <1 RK_PB0 0x02 &pcfg_pull_none>;
+        };
+        emmc_rstnout: emmc-rstnout {
+            rockchip,pins = <1 RK_PB3 0x02 &pcfg_pull_none>;
+        };
+    };
 
 	pmic {
 		/* ODROID-GO2 : PMIC_INT(GPIO0.PB2) */
@@ -1271,24 +1358,44 @@
 				<0 RK_PA4 RK_FUNC_2 &pcfg_pull_none>;
 		};
 	};
+	
+	sdio {
+
+		sdio_clk: sdio-clk {
+			rockchip,pins = <1 RK_PC5 RK_FUNC_1 &pcfg_pull_none>;
+		};
+
+		sdio_cmd: sdio-cmd {
+			rockchip,pins = <1 RK_PC4 RK_FUNC_1 &pcfg_pull_up>;
+		};
+
+		sdio_bus4: sdio-bus4 {
+			rockchip,pins = 
+				<1 RK_PC6 RK_FUNC_1 &pcfg_pull_up>,
+				<1 RK_PC7 RK_FUNC_1 &pcfg_pull_up>,
+				<1 RK_PD0 RK_FUNC_1 &pcfg_pull_up>,
+				<1 RK_PD1 RK_FUNC_1 &pcfg_pull_up>;
+		};
+	};
+
     vcc18-lcd {
         vcc18_lcd_n: vcc18-lcd-n {
-            rockchip,pins = <0 RK_PB5 RK_FUNC_GPIO &pcfg_pull_none>;
+            rockchip,pins = <3 RK_PA3 RK_FUNC_GPIO &pcfg_pull_none>;
         };
     };
 
     vcc5-usb {
         vcc5_usb: vcc5-usb {
             rockchip,pins = <3 RK_PA4 RK_FUNC_GPIO &pcfg_pull_none>;
-        };
-    };
+		};
+	};
 
 	sdio-pwrseq {
 
 		wifi-enable-h {
 			rockchip,pins = <0 RK_PA2 RK_FUNC_GPIO &pcfg_pull_none>;
-		};
-	};
+        };
+    };
 
 	leds {
 		led_pins: led-pins {
@@ -1325,6 +1432,11 @@
 			<0 RK_PB7 RK_FUNC_GPIO &pcfg_pull_down>;
 		};
 	};
+	headphone {
+        hp_det: hp-det {
+            rockchip,pins = <2 RK_PC6 RK_FUNC_GPIO &pcfg_pull_up>;
+        };
+    };
 };
 
 /* DON'T PUT ANYTHING BELOW HERE.  PUT IT ABOVE PINCTRL */

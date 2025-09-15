@@ -672,6 +672,7 @@
 
 &gpu {
 	mali-supply = <&vdd_logic>;
+    gpu-supply  = <&vdd_logic>;   /* 兼容旧分支 */
 	status = "okay";
 };
 
@@ -1204,6 +1205,9 @@
 	status = "okay";
 
 	u2phy_host: host-port {
+		/* ★ 绑定 5V 给 PHY/Host 口 */
+        vbus-supply = <&vcc_host>;
+        phy-supply  = <&vcc_host>;  /* 某些 4.4 分支会读这个键 */
 		status = "okay";
 	};
 
@@ -1213,6 +1217,10 @@
 };
 
 &usb20_otg {
+    /* ★ 绑定 5V 给 DWC2 控制器（不同分支可能读取 vbus / vusb_*） */
+    vbus-supply   = <&vcc_host>;
+    vusb_d-supply = <&vcc_host>;
+    vusb_a-supply = <&vcc_host>;
 	status = "okay";
 };
 
@@ -1296,10 +1304,10 @@
 			<1 RK_PA7 0x02 &pcfg_pull_up_8_6ma>;
         };
         emmc_pwren: emmc-pwren {
-            rockchip,pins = <1 0x08 0x02 0xb8>;
+            rockchip,pins = <1 RK_PB0 0x02 &pcfg_pull_none>;
         };
         emmc_rstnout: emmc-rstnout {
-            rockchip,pins = <1 0x0b 0x02 0xb8>;
+            rockchip,pins = <1 RK_PB3 0x02 &pcfg_pull_none>;
         };
     };
 
@@ -1329,7 +1337,7 @@
 	};
     vcc18-lcd {
         vcc18_lcd_n: vcc18-lcd-n {
-            rockchip,pins = <3 RK_PA3 RK_FUNC_GPIO &pcfg_pull_none>;
+            rockchip,pins = <0 RK_PB5 RK_FUNC_GPIO &pcfg_pull_none>;
         };
     };
 
