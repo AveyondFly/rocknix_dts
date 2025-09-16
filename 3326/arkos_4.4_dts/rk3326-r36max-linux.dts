@@ -999,7 +999,6 @@
 				Charging Voltage Max : 4.25V
 				Sample resister : 10 mohm
 			*/
-			design_capacity = <3380>;
 			design_capacity = <2832>;
 			design_qmax = <3115>;
 			bat_res = <150>;
