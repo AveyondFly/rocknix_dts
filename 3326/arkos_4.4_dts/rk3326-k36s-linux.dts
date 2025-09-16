@@ -187,55 +187,55 @@
 			label = "GPIO BTN-X";
 			linux,code = <BTN_NORTH>;
 		};
-		sw9 {
-			gpios = <&gpio3 RK_PD0 GPIO_ACTIVE_LOW>;
-			label = "BTN_SELECT";
-			linux,code = <BTN_TRIGGER_HAPPY1>;
-		};
-		sw10 {
-			gpios = <&gpio3 RK_PD1 GPIO_ACTIVE_LOW>;
-			label = "BTN_START";
-			linux,code = <BTN_TRIGGER_HAPPY2>;
-		};
 		/* this sw11 entry is SPECIAL, most RK3566 devices do not have
 		   this physical button but for the sake of keeping compatibility
 		   with ES and retroarch, this phantom button and offset will
 		   allow existing userspace programs to work without doing any
 		   new remapping thus saving lots of headaches and extra work */
 		sw11 {
-			gpios = <&gpio3 RK_PB2 GPIO_ACTIVE_LOW>;
-			label = "GPIO BTN_F";
-			linux,code = <BTN_MODE>;
+			gpios = <&gpio2 RK_PB6 GPIO_ACTIVE_LOW>;
+			label = "BTN_THUMBR";
+			linux,code = <BTN_TRIGGER_HAPPY3>;
 		};
 		sw12 {
 			gpios = <&gpio2 RK_PB5 GPIO_ACTIVE_LOW>;
 			label = "BTN_THUMBL";
-			linux,code = <BTN_THUMBL>;
+			linux,code = <BTN_TRIGGER_HAPPY4>;
 		};
 		sw13 {
-			gpios = <&gpio2 RK_PB6 GPIO_ACTIVE_LOW>;
-			label = "BTN_THUMBR";
-			linux,code = <BTN_THUMBR>;
-		};
-		sw14 {
-			gpios = <&gpio3 RK_PB3 GPIO_ACTIVE_LOW>;
-			label = "GPIO BTN_TR";
-			linux,code = <BTN_TR>;
+			gpios = <&gpio3 RK_PB2 GPIO_ACTIVE_LOW>;
+			label = "GPIO BTN_F";
+			linux,code = <BTN_TRIGGER_HAPPY5>;
 		};
 		sw15 {
-			gpios = <&gpio3 RK_PB4 GPIO_ACTIVE_LOW>;
-			label = "GPIO BTN_TR2";
-			linux,code = <BTN_TR2>;
-		};
-		sw16 {
 			gpios = <&gpio3 RK_PB5 GPIO_ACTIVE_LOW>;
 			label = "GPIO BTN_TL";
 			linux,code = <BTN_TL>;
 		};
-		sw17 {
+		sw16 {
+			gpios = <&gpio3 RK_PB3 GPIO_ACTIVE_LOW>;
+			label = "GPIO BTN_TR";
+			linux,code = <BTN_TR>;
+		};
+		sw19 {
+			gpios = <&gpio3 RK_PD0 GPIO_ACTIVE_LOW>;
+			label = "BTN_SELECT";
+			linux,code = <BTN_TRIGGER_HAPPY1>;
+		};
+		sw20 {
+			gpios = <&gpio3 RK_PB4 GPIO_ACTIVE_LOW>;
+			label = "GPIO BTN_TR2";
+			linux,code = <BTN_TR2>;
+		};
+		sw21 {
 			gpios = <&gpio3 RK_PB6 GPIO_ACTIVE_LOW>;
 			label = "GPIO BTN_TL2";
 			linux,code = <BTN_TL2>;
+		};
+		sw22 {
+			gpios = <&gpio3 RK_PD1 GPIO_ACTIVE_LOW>;
+			label = "BTN_START";
+			linux,code = <BTN_TRIGGER_HAPPY2>;
 		};
 
 		/* gpio button auto repeat set value : default disable */
