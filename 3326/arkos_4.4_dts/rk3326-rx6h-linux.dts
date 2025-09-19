@@ -200,12 +200,12 @@
 		sw11 {
 			gpios = <&gpio2 RK_PB6 GPIO_ACTIVE_LOW>;
 			label = "BTN_THUMBR";
-			linux,code = <BTN_TRIGGER_HAPPY3>;
+			linux,code = <BTN_TRIGGER_HAPPY4>;
 		};
 		sw12 {
 			gpios = <&gpio2 RK_PB5 GPIO_ACTIVE_LOW>;
 			label = "BTN_THUMBL";
-			linux,code = <BTN_TRIGGER_HAPPY4>;
+			linux,code = <BTN_TRIGGER_HAPPY3>;
 		};
 		sw13 {
 			gpios = <&gpio3 RK_PB2 GPIO_ACTIVE_LOW>;
@@ -1191,7 +1191,7 @@
 	sd-uhs-sdr104;
 	vqmmc-supply = <&vccio_sd>;
 	vmmc-supply = <&vcc_sd>;
-	status = "okay";
+	status = "disable";
 };
 
 &tsadc {
@@ -1205,9 +1205,6 @@
 	status = "okay";
 
 	u2phy_host: host-port {
-		/* ★ 绑定 5V 给 PHY/Host 口 */
-        vbus-supply = <&vcc_host>;
-        phy-supply  = <&vcc_host>;  /* 某些 4.4 分支会读这个键 */
 		status = "okay";
 	};
 
@@ -1217,10 +1214,6 @@
 };
 
 &usb20_otg {
-    /* ★ 绑定 5V 给 DWC2 控制器（不同分支可能读取 vbus / vusb_*） */
-    vbus-supply   = <&vcc_host>;
-    vusb_d-supply = <&vcc_host>;
-    vusb_a-supply = <&vcc_host>;
 	status = "okay";
 };
 
@@ -1335,6 +1328,7 @@
 				<0 RK_PA4 RK_FUNC_2 &pcfg_pull_none>;
 		};
 	};
+
     vcc18-lcd {
         vcc18_lcd_n: vcc18-lcd-n {
             rockchip,pins = <0 RK_PB5 RK_FUNC_GPIO &pcfg_pull_none>;

@@ -196,12 +196,12 @@
 		sw11 {
 			gpios = <&gpio2 RK_PB6 GPIO_ACTIVE_LOW>;
 			label = "BTN_THUMBR";
-			linux,code = <BTN_TRIGGER_HAPPY3>;
+			linux,code = <BTN_TRIGGER_HAPPY4>;
 		};
 		sw12 {
 			gpios = <&gpio2 RK_PB5 GPIO_ACTIVE_LOW>;
 			label = "BTN_THUMBL";
-			linux,code = <BTN_TRIGGER_HAPPY4>;
+			linux,code = <BTN_TRIGGER_HAPPY3>;
 		};
 		sw13 {
 			gpios = <&gpio3 RK_PB2 GPIO_ACTIVE_LOW>;
@@ -397,6 +397,7 @@
 	vcc18_lcd0: vcc18_lcd0 {
 		compatible = "regulator-fixed";
 		regulator-name = "vcc18_lcd0_n";
+		pinctrl-0 = <&vcc18_lcd_n>;
 		enable-active-high;
 		regulator-boot-on;
 		regulator-state-mem {
@@ -418,8 +419,8 @@
     vcc_host: vcc_host {
         compatible = "regulator-fixed";
         regulator-name = "vcc_host";
-        regulator-min-microvolt = <3300000>;
-        regulator-max-microvolt = <3300000>;
+        regulator-min-microvolt = <5000000>;
+        regulator-max-microvolt = <5000000>;
         gpio = <&gpio3 RK_PA4 GPIO_ACTIVE_HIGH>;
 	pinctrl-0 = <&vcc5_usb>;
 	pinctrl-names = "default";
@@ -1000,7 +1001,7 @@
 				regulator-min-microvolt = <3300000>;
 				regulator-max-microvolt = <3300000>;
 
-				regulator-name = "vcc1v8_dvp";
+				regulator-name = "vcc3v0_dvp";
 				regulator-state-mem {
 					regulator-on-in-suspend;
 					regulator-suspend-microvolt = <3300000>;
@@ -1392,7 +1393,7 @@
 
     vcc18-lcd {
         vcc18_lcd_n: vcc18-lcd-n {
-            rockchip,pins = <0 RK_PB5 RK_FUNC_GPIO &pcfg_pull_none>;
+            rockchip,pins = <3 RK_PA3 RK_FUNC_GPIO &pcfg_pull_none>;
         };
     };
 
@@ -1405,7 +1406,7 @@
 	sdio-pwrseq {
 
 		wifi-enable-h {
-			rockchip,pins = <0 RK_PA2 RK_FUNC_GPIO &pcfg_output_high>;
+			rockchip,pins = <0 RK_PA2 RK_FUNC_GPIO &pcfg_pull_none>;
         };
     };
 

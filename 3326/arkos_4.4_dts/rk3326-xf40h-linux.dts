@@ -195,12 +195,12 @@
 		sw11 {
 			gpios = <&gpio2 RK_PB6 GPIO_ACTIVE_LOW>;
 			label = "BTN_THUMBR";
-			linux,code = <BTN_TRIGGER_HAPPY3>;
+			linux,code = <BTN_TRIGGER_HAPPY4>;
 		};
 		sw12 {
 			gpios = <&gpio2 RK_PB5 GPIO_ACTIVE_LOW>;
 			label = "BTN_THUMBL";
-			linux,code = <BTN_TRIGGER_HAPPY4>;
+			linux,code = <BTN_TRIGGER_HAPPY3>;
 		};
 		sw13 {
 			gpios = <&gpio3 RK_PB2 GPIO_ACTIVE_LOW>;
@@ -349,27 +349,49 @@
 
 	rk817-sound {
 		compatible = "simple-audio-card";
+		simple-audio-card,name = "rk817_ext";
+
+		/* I2S 主从/格式（之前 -22 已经好了，保留） */
 		simple-audio-card,format = "i2s";
-	       simple-audio-card,name = "rk817_ext";
+		simple-audio-card,bitclock-master = <&i2s1_2ch>;
+		simple-audio-card,frame-master    = <&i2s1_2ch>;
 		simple-audio-card,mclk-fs = <256>;
-		simple-audio-card,widgets =
-			"Microphone", "Mic Jack",
-			"Headphone", "Headphone Jack";
-		simple-audio-card,routing =
-			"MIC_IN", "Mic Jack",
-			/*"IN1P", "Mic Jack",*/
-			"Headphone Jack", "HPOL",
-			"Headphone Jack", "HPOR";
+
+		/* 插拔检测继续保留 */
 		simple-audio-card,hp-det-gpio = <&gpio2 RK_PC6 GPIO_ACTIVE_LOW>;
 
-		simple-audio-card,codec-hp-det = <1>;
-		simple-audio-card,cpu {
-			sound-dai = <&i2s1_2ch>;
-		};
-		simple-audio-card,codec {
-			sound-dai = <&rk817_codec>;
-		};
+		/* ★用 aux-devs 接入外置功放（由它来拉 GPIO103） */
+		simple-audio-card,aux-devs = <&speaker_amp>;
+
+		/* ★必须声明这些 widgets，否则会报 unknown pin */
+		simple-audio-card,widgets =
+			"Microphone", "Mic Jack",
+			"Headphone",  "Headphone Jack",
+			"Speaker",    "Speaker";
+
+		/*
+		* ★路由：右边要写 codec 真正的端口名
+		* 你们这条线常见有两种命名，选其一编译重启，哪种不报错就用哪种：
+		*/
+
+		/* ——方案 A（更常见于老分支）：HPOUTL/HPOUTR + SPK —— */
+		// simple-audio-card,routing =
+		//     "Headphone Jack", "HPOUTL",
+		//     "Headphone Jack", "HPOUTR",
+		//     "IN",              "SPK",
+		//     "Speaker",         "OUT";
+
+		/* ——方案 B（Rockchip 另一常见法）：HPOL/HPOR + SPKO —— */
+		simple-audio-card,routing =
+			"Headphone Jack", "HPOL",
+			"Headphone Jack", "HPOR",
+			"IN",              "SPKO",
+			"Speaker",         "OUT";
+
+		simple-audio-card,cpu   { sound-dai = <&i2s1_2ch>; };
+		simple-audio-card,codec { sound-dai = <&rk817_codec>; };
 	};
+
 
 	vccsys: vccsys {
 		compatible = "regulator-fixed";
@@ -398,17 +420,27 @@
 		};
 	};
 
-	vcc18_audio: vcc_audio {
-		compatible = "regulator-fixed";
-		regulator-name = "vcc_audio";
-		gpio = <&gpio3 RK_PA7 GPIO_ACTIVE_HIGH>;
-		pinctrl-0 = <&hp_det>;
-		pinctrl-names = "default";
-	        enable-active-high;
-	        regulator-always-on;
-	        regulator-boot-on;
+	// vcc_audio: vcc-audio {
+	// 	compatible = "regulator-fixed";
+	// 	regulator-name = "vcc_audio";
+	// 	gpio = <&gpio3 RK_PA7 GPIO_ACTIVE_HIGH>;
+	// 	pinctrl-names = "default";
+	// 	pinctrl-0 = <&spk_en>;
+	// 	enable-active-high;
+	// 	regulator-always-on;     /* 或去掉 always-on，交给驱动按需开关 */
+	// 	regulator-boot-on;
+	// 	regulator-min-microvolt = <3300000>; /* 按你功放电源电压改 */
+	// 	regulator-max-microvolt = <3300000>;
+	// 	vin-supply = <&vcc_3v0>; /* 或者 <&dcdc_boost> 看你功放供电 */
+	// };
+	/* 外置功放，用它来控制 GPIO103（GPIO3_A7） */
+	speaker_amp: speaker-amp {
+		compatible = "simple-audio-amplifier";
+		enable-gpios = <&gpio3 RK_PA7 GPIO_ACTIVE_HIGH>; /* 103 */
+		/* 如果有供电轨可以顺带接上 */
+		// VCC-supply = <&vcc_3v0>;
+		sound-name-prefix = "AMP";
 	};
-
     vcc_host: vcc_host {
         compatible = "regulator-fixed";
         regulator-name = "vcc_host";
@@ -1073,8 +1105,11 @@
 			clock-names = "mclk";
 			pinctrl-names = "default";
 			pinctrl-0 = <&i2s1_2ch_mclk>;
-			hp-volume = <20>;
-			spk-volume = <3>;
+
+			/* 合理的默认音量（避免底噪/爆音）*/
+			hp-volume  = <20>;   /* 0~31，主观 70% 附近 */
+			spk-volume = <3>;    /* 0~7，先保守一点 */
+
 			status = "okay";
 		};
 	};
@@ -1419,9 +1454,9 @@
 			<3 RK_PA6 RK_FUNC_GPIO &pcfg_pull_down>;
 		};
 	};
-	headphone {
-        hp_det: hp-det {
-            rockchip,pins = <2 RK_PC6 RK_FUNC_GPIO &pcfg_pull_up>;
+    audio_amp {
+        spk_en: spk-en {
+            rockchip,pins = <3 RK_PA7 RK_FUNC_GPIO &pcfg_pull_none>;
         };
     };
 };
