@@ -195,12 +195,12 @@
 		sw11 {
 			gpios = <&gpio2 RK_PB6 GPIO_ACTIVE_LOW>;
 			label = "BTN_THUMBR";
-			linux,code = <BTN_TRIGGER_HAPPY3>;
+			linux,code = <BTN_TRIGGER_HAPPY4>;
 		};
 		sw12 {
 			gpios = <&gpio2 RK_PB5 GPIO_ACTIVE_LOW>;
 			label = "BTN_THUMBL";
-			linux,code = <BTN_TRIGGER_HAPPY4>;
+			linux,code = <BTN_TRIGGER_HAPPY3>;
 		};
 		sw13 {
 			gpios = <&gpio3 RK_PB2 GPIO_ACTIVE_LOW>;
