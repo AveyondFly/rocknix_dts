@@ -389,7 +389,7 @@
 	wireless-wlan {
 		compatible = "wlan-platdata";
 		wifi_chip_type = "rk915";
-		WIFI,host_wake_irq = <&gpio0 RK_PA1 GPIO_ACTIVE_HIGH>;
+		WIFI,host_wake_irq = <&gpio0 RK_PA1 IRQ_TYPE_LEVEL_HIGH>;
 		WIFI,poweren_gpio = <&gpio0 RK_PA2 GPIO_ACTIVE_HIGH>;
 		status = "okay";
 	};
@@ -418,16 +418,16 @@
 
     vcc_host: vcc_host {
         compatible = "regulator-fixed";
-        regulator-name = "vcc_host";
-        regulator-min-microvolt = <5000000>;
-        regulator-max-microvolt = <5000000>;
+        regulator-name = "vbus_host";
+        regulator-min-microvolt = <3300000>;
+        regulator-max-microvolt = <3300000>;
         gpio = <&gpio3 RK_PA4 GPIO_ACTIVE_HIGH>;
 	pinctrl-0 = <&vcc5_usb>;
 	pinctrl-names = "default";
         enable-active-high;
         regulator-always-on;
         regulator-boot-on;
-        vin-supply = <&dcdc_boost>;
+        // vin-supply = <&dcdc_boost>;
     };
 
 /*	vcc_host: vcc_host {
@@ -1239,15 +1239,22 @@
 
 	u2phy_host: host-port {
 		status = "okay";
+		phy-supply = <&vcc_host>;
 	};
 
 	u2phy_otg: otg-port {
-		status = "disabled";
+		status = "okay";
+		#phy-cells = <0>;
+		/* 别忘了三个中断 + 名称（之前给过） */
+		vbus-supply = <&vcc_host>;   // 或 <&vbus_host>
 	};
 };
 
 &usb20_otg {
+	dr_mode = "host";
 	status = "okay";
+    vusb_d-supply = <&vcc_sd>;  /* 数字域：很多板接 3.3V */
+    vusb_a-supply = <&vcc1v8_soc>;  /* 模拟/PLL：有的板接 1.8V，也有接 3.3V 的，按原理图来 */
 };
 
 /*

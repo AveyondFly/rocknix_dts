@@ -57,9 +57,8 @@
                 rumble-boost-strong = <0x0000>;
 
                 joypad-name = "GO-Super Gamepad";
-                joypad-product = <0x1101>;
+                joypad-product = <0x1100>;
                 joypad-revision = <0x0100>;
-				joypad-vendor = <0x484B>;
 		status = "okay";
                 /*
                   - odroidgo3-joypad sysfs list -

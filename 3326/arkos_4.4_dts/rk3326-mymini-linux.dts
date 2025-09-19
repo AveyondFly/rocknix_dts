@@ -59,8 +59,8 @@
                 rumble-boost-strong = <0x0000>;
 
                 joypad-name = "GO-Advance Gamepad";
-                joypad-product = <0x1000>;
-                joypad-revision = <0x0100>;
+				joypad-product = <0x1100>;
+				joypad-revision = <0x0100>;
 
 		status = "okay";
                 /*
