@@ -2083,7 +2083,7 @@
 			dsi,flags = <0xa03>;
 			dsi,format = <0x00>;
 			dsi,lanes = <0x02>;
-			panel-init-sequence = [05 c8 01 11 15 00 02 36 c0 05 0a 01 29];
+			panel-init-sequence = [ 05 78 01 11 15 00 02 36 d0 15 00 02 3a 77 29 00 05 2a 00 00 02 7f 29 00 05 2b 00 00 01 df 05 0a 01 29 ];
 			panel-exit-sequence = <0x5140128 0x50a0110>;
 			panel-read-id-sequence = [05 00 02 00 00];
 
