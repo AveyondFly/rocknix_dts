@@ -152,24 +152,27 @@
 
 &internal_display {
 	compatible = "rocknix,generic-dsi";
-	panel_description =
+        panel_description =
         "G size=52,70 delays=0,0,80,0,20 format=rgb888 lanes=2 flags=0xe03",
 
         "M clock=21000 horizontal=640,48,4,48 vertical=480,10,4,10 default=1",
-        // "M clock=21000 horizontal=640,48,34,48 vertical=480,10,46,10",
+        "M clock=21000 horizontal=640,48,34,48 vertical=480,10,46,10",
         "M clock=21000 horizontal=640,48,14,48 vertical=480,10,60,10",
-        // "M clock=23210 horizontal=640,48,9,48 vertical=480,10,123,10",
-        // "M clock=22080 horizontal=640,48,14,48 vertical=480,10,12,10",
-        // "M clock=23180 horizontal=640,48,22,48 vertical=480,10,12,10",
-        // "M clock=23400 horizontal=640,48,34,48 vertical=480,10,7,10",
-        // "M clock=22680 horizontal=640,48,14,48 vertical=480,10,4,10",
-        // "M clock=27860 horizontal=640,48,19,48 vertical=480,10,114,10",
-        // "M clock=33440 horizontal=640,48,15,48 vertical=480,10,90,10",
-        // "M clock=34020 horizontal=640,48,14,48 vertical=480,10,4,10",
-        // "M clock=45360 horizontal=640,48,14,48 vertical=480,10,4,10",
+        "M clock=23210 horizontal=640,48,9,48 vertical=480,10,123,10",
+        "M clock=29670 horizontal=640,46,20,44 vertical=480,165,29,14",
+        "M clock=34350 horizontal=640,46,14,44 vertical=480,165,114,14",
+        "M clock=23940 horizontal=640,46,11,44 vertical=480,16,29,14",
+        "M clock=23040 horizontal=640,46,20,44 vertical=480,16,2,14",
+        "M clock=22920 horizontal=640,46,2,44 vertical=480,16,11,14",
+        "M clock=35310 horizontal=640,46,32,44 vertical=480,16,104,14",
+        "M clock=34560 horizontal=640,46,20,44 vertical=480,16,2,14",
+        "M clock=46080 horizontal=640,46,20,44 vertical=480,16,2,14",
 
-        "I seq=11 wait=200",
-        "I seq=36c0",
+        "I seq=11 wait=120",
+        "I seq=36d0",
+        "I seq=3a77",
+        "I seq=2a0000027f",
+        "I seq=2b000001df",
         "I seq=29 wait=10";
 };
 
