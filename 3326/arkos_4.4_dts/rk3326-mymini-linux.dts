@@ -359,7 +359,7 @@
 	rk817-sound {
 		compatible = "simple-audio-card";
 		simple-audio-card,format = "i2s";
-	       simple-audio-card,name = "rk817_ext";
+		simple-audio-card,name = "rockchip,rk817-codec";
 		simple-audio-card,mclk-fs = <256>;
 		simple-audio-card,widgets =
 			"Microphone", "Mic Jack",
@@ -370,7 +370,6 @@
 			"Headphone Jack", "HPOL",
 			"Headphone Jack", "HPOR";
 		simple-audio-card,hp-det-gpio = <&gpio2 RK_PC6 GPIO_ACTIVE_LOW>;
-
 		simple-audio-card,codec-hp-det = <1>;
 		simple-audio-card,cpu {
 			sound-dai = <&i2s1_2ch>;
@@ -398,16 +397,16 @@
 		};
 	};
 
-	vcc18_audio: vcc_audio {
-		compatible = "regulator-fixed";
-		regulator-name = "vcc_audio";
-		gpio = <&gpio3 RK_PA7 GPIO_ACTIVE_HIGH>;
-		pinctrl-0 = <&hp_det>;
-		pinctrl-names = "default";
-	        enable-active-high;
-	        regulator-always-on;
-	        regulator-boot-on;
-	};
+	// vcc18_audio: vcc_audio {
+	// 	compatible = "regulator-fixed";
+	// 	regulator-name = "vcc_audio";
+	// 	gpio = <&gpio3 RK_PA7 GPIO_ACTIVE_HIGH>;
+	// 	pinctrl-0 = <&hp_det>;
+	// 	pinctrl-names = "default";
+	//         enable-active-high;
+	//         regulator-always-on;
+	//         regulator-boot-on;
+	// };
 
     vcc_host: vcc_host {
         compatible = "regulator-fixed";
@@ -1061,6 +1060,7 @@
 			clock-names = "mclk";
 			pinctrl-names = "default";
 			pinctrl-0 = <&i2s1_2ch_mclk>;
+			spk-ctl-gpios = <&gpio3 RK_PA7 GPIO_ACTIVE_HIGH>;
 			hp-volume = <20>;
 			spk-volume = <3>;
 			status = "okay";
