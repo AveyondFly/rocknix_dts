@@ -107,32 +107,42 @@
         };
     };
 
-    joypad: joypad {
-        compatible = "rocknix-joypad";
+	gpio-keys-vol {
+		compatible = "gpio-keys";
+		autorepeat;
+		pinctrl-0 = <&btn_pins_vol>;
+		pinctrl-names = "default";
 
-        joypad-name = "retrogame_joypad";
-        joypad-product = <0x1188>;
-        joypad-revision = <0x0188>;
+		button-vol-down {
+			gpios = <&gpio3 RK_PB1 GPIO_ACTIVE_LOW>;
+			label = "VOLUMEDOWN";
+			linux,code = <KEY_VOLUMEDOWN>;
+		};
+
+		button-volume-up {
+			gpios = <&gpio3 RK_PB0 GPIO_ACTIVE_LOW>;
+			label = "VOLUMEUP";
+			linux,code = <KEY_VOLUMEUP>;
+		};
+	};
+
+    joypad: rocknix-joypad {
+		compatible = "rocknix-joypad";
+
+		joypad-name = "retrogame_joypad";
+		joypad-product = <0x1101>;
+		joypad-revision = <0x0100>;
+		joypad-vendor = <0x484B>;
 
         status = "okay";
 
         /* gpio pincontrol setup */
         pinctrl-names = "default";
-        pinctrl-0 = <&btn_pins>;
+        pinctrl-0 = <&btn_pins_ctrl>;
 
-        /* Analog mux define */
-        io-channel-names = "key-LY", "key-LX";
-        io-channels = <&saradc 2>,<&saradc 1>;
-
-        /* adc mux channel count */
-        amux-count = <4>;
-        /* non-default wiring */
-        amux-channel-mapping = <2 3 1 0>;
-        /* adc mux enable gpio */
-        amux-en-gpios = <&gpio2 RK_PB4 GPIO_ACTIVE_LOW>;   /* rocker0-gpios */
-        /* adc mux select(a,b) gpio */
-        amux-a-gpios = <&gpio2 RK_PC0 GPIO_ACTIVE_LOW>;     /* rocker1-gpios */
-        amux-b-gpios = <&gpio2 RK_PB7 GPIO_ACTIVE_LOW>;     /* rocker-gpios */
+		/* analog mux define */
+		io-channel-names = "key-RY", "key-RX", "key-LY", "key-LX";
+		io-channels = <&saradc 2>,<&saradc 1>,<&saradc 2>,<&saradc 1>;
 
         /* adc calculate scale */
         button-adc-scale = <2>;
@@ -171,7 +181,7 @@
         /*
            autorepeat;
          */
-
+        skip-absr;
 		invert-absx;
 		invert-absy;
 
@@ -179,95 +189,124 @@
             joypad driver is poll-device driver.
             poll-device is does not support wakeup-source.
          */
-        sw1 {
-            gpios = <&gpio3 RK_PC6 GPIO_ACTIVE_LOW>;
-            label = "GPIO DPAD-UP";
-            linux,code = <BTN_DPAD_UP>; // 0x220
-        };
-        sw2 {
-            gpios = <&gpio3 RK_PC7 GPIO_ACTIVE_LOW>;
-            label = "GPIO DPAD-DOWN";
-            linux,code = <BTN_DPAD_DOWN>; // 0x221
-        };
-        sw3 {
-            gpios = <&gpio3 RK_PC4 GPIO_ACTIVE_LOW>;
-            label = "GPIO DPAD-LEFT";
-            linux,code = <BTN_DPAD_LEFT>; // 0x222
-        };
-        sw4 {
-            gpios = <&gpio3 RK_PC5 GPIO_ACTIVE_LOW>;
-            label = "GPIO DPAD-RIGHT";
-            linux,code = <BTN_DPAD_RIGHT>; // 0x223
+		sw1 {
+			gpios = <&gpio3 RK_PC6 GPIO_ACTIVE_LOW>;
+			label = "GPIO DPAD-UP";
+			linux,code = <BTN_DPAD_UP>;
+		};
+		sw2 {
+			gpios = <&gpio3 RK_PC7 GPIO_ACTIVE_LOW>;
+			label = "GPIO DPAD-DOWN";
+			linux,code = <BTN_DPAD_DOWN>;
+		};
+		sw3 {
+			gpios = <&gpio3 RK_PC4 GPIO_ACTIVE_LOW>;
+			label = "GPIO DPAD-LEFT";
+			linux,code = <BTN_DPAD_LEFT>;
+		};
+		sw4 {
+			gpios = <&gpio3 RK_PC5 GPIO_ACTIVE_LOW>;
+			label = "GPIO DPAD-RIGHT";
+			linux,code = <BTN_DPAD_RIGHT>;
+		};
+		sw5 {
+			gpios = <&gpio3 RK_PC0 GPIO_ACTIVE_LOW>;
+			label = "GPIO BTN-A";
+			linux,code = <BTN_EAST>;
+		};
+		sw6 {
+			gpios = <&gpio3 RK_PC1 GPIO_ACTIVE_LOW> ;
+			label = "GPIO BTN-B";
+			linux,code = <BTN_SOUTH>;
+		};
+		sw7 {
+			gpios = <&gpio3 RK_PC3 GPIO_ACTIVE_LOW>;
+			label = "GPIO BTN-Y";
+			linux,code = <BTN_WEST>;
+		};
+		sw8 {
+			gpios = <&gpio3 RK_PC2 GPIO_ACTIVE_LOW>;
+			label = "GPIO BTN-X";
+			linux,code = <BTN_NORTH>;
+		};
+		sw9 {
+			gpios = <&gpio3 RK_PD0 GPIO_ACTIVE_LOW>;
+			label = "BTN_SELECT";
+			linux,code = <BTN_SELECT>;
+		};
+		sw10 {
+			gpios = <&gpio3 RK_PD1 GPIO_ACTIVE_LOW>;
+			label = "BTN_START";
+			linux,code = <BTN_START>;
+		};
+		/* this sw11 entry is SPECIAL, most RK3566 devices do not have
+		   this physical button but for the sake of keeping compatibility
+		   with ES and retroarch, this phantom button and offset will
+		   allow existing userspace programs to work without doing any
+		   new remapping thus saving lots of headaches and extra work */
+		sw11 {
+			gpios = <&gpio3 RK_PB2 GPIO_ACTIVE_LOW>;
+			label = "GPIO BTN_F";
+			linux,code = <BTN_MODE>;
+		};
+		sw12 {
+			gpios = <&gpio2 RK_PB5 GPIO_ACTIVE_LOW>;
+			label = "BTN_THUMBL";
+			linux,code = <BTN_THUMBL>;
+		};
+		sw13 {
+			gpios = <&gpio2 RK_PB6 GPIO_ACTIVE_LOW>;
+			label = "BTN_THUMBR";
+			linux,code = <BTN_THUMBR>;
+		};
+		sw14 {
+			gpios = <&gpio3 RK_PB3 GPIO_ACTIVE_LOW>;
+			label = "GPIO BTN_TR";
+			linux,code = <BTN_TR>;
+		};
+		sw15 {
+			gpios = <&gpio3 RK_PB4 GPIO_ACTIVE_LOW>;
+			label = "GPIO BTN_TR2";
+			linux,code = <BTN_TR2>;
+		};
+		sw16 {
+			gpios = <&gpio3 RK_PB5 GPIO_ACTIVE_LOW>;
+			label = "GPIO BTN_TL";
+			linux,code = <BTN_TL>;
+		};
+		sw17 {
+			gpios = <&gpio3 RK_PB6 GPIO_ACTIVE_LOW>;
+			label = "GPIO BTN_TL2";
+			linux,code = <BTN_TL2>;
+		};
+    };
+
+    
+    leds: gpio-leds {
+         compatible = "gpio-leds";
+         pinctrl-0 = <&led_pins>;
+         pinctrl-names = "default";
+
+        led-0 {
+            color = <LED_COLOR_ID_GREEN>;
+            default-state = "off";
+            function = LED_FUNCTION_STATUS;
+            gpios = <&gpio2 RK_PA1 GPIO_ACTIVE_HIGH>;
         };
 
-        sw5 {
-            gpios = <&gpio3 RK_PC0 GPIO_ACTIVE_LOW>;
-            label = "GPIO KEY BTN-A";
-            linux,code = <BTN_EAST>; // 0x131
+        led-1 {
+            color = <LED_COLOR_ID_RED>;
+            default-state = "off";
+            function = LED_FUNCTION_CHARGING;
+            gpios = <&gpio2 RK_PA2 GPIO_ACTIVE_HIGH>;
         };
-        sw6 {
-            gpios = <&gpio3 RK_PC1 GPIO_ACTIVE_LOW>;
-            label = "GPIO BTN-B";
-            linux,code = <BTN_SOUTH>; // 0x130
-        };
-        sw7 {
-            gpios = <&gpio3 RK_PC3 GPIO_ACTIVE_LOW>;
-            label = "GPIO BTN-Y";
-            linux,code = <BTN_WEST>; // 0x134
-        };
-        sw8 {
-            gpios = <&gpio3 RK_PC2 GPIO_ACTIVE_LOW>;
-            label = "GPIO BTN-X";
-            linux,code = <BTN_NORTH>; // 0x133
+        led-2 {
+            color = <LED_COLOR_ID_BLUE>;
+            default-state = "off";
+            function = LED_FUNCTION_STATUS;
+            gpios = <&gpio2 RK_PA0 GPIO_ACTIVE_HIGH>;
         };
 
-        sw11 {
-            gpios = <&gpio2 RK_PB5 GPIO_ACTIVE_LOW>;
-            label = "GPIO BTN_THUMBL";
-            linux,code = <BTN_THUMBL>; // 0x2c2
-        };
-        sw12 {
-            gpios = <&gpio2 RK_PB6 GPIO_ACTIVE_LOW>;
-            label = "GPIO BTN_THUMBR";
-            linux,code = <BTN_THUMBR>; // 0x2c3
-        };
-
-        sw13 {
-            gpios = <&gpio3 RK_PB2 GPIO_ACTIVE_LOW>;
-            label = "GPIO BTN_FN";
-            linux,code = <BTN_MODE>; // 0x2c4
-        };
-
-        sw15 {
-            gpios = <&gpio3 RK_PB5 GPIO_ACTIVE_LOW>;
-            label = "GPIO TOP-LEFT";
-            linux,code = <BTN_TL>; // 0x02
-        };
-        sw16 {
-            gpios = <&gpio3 RK_PB3 GPIO_ACTIVE_LOW>;
-            label = "GPIO TOP-RIGHT";
-            linux,code = <BTN_TR>; // 0x05
-        };
-        sw19 {
-            gpios = <&gpio3 RK_PD0 GPIO_ACTIVE_LOW>;
-            label = "GPIO BTN_SELECT";
-            linux,code = <BTN_SELECT>;
-        };
-        sw20 {
-            gpios = <&gpio3 RK_PB4 GPIO_ACTIVE_LOW>;
-            label = "GPIO TOP-RIGHT2";
-            linux,code = <BTN_TR2>;
-        };
-        sw21 {
-            gpios = <&gpio3 RK_PB6 GPIO_ACTIVE_LOW>;
-            label = "GPIO TOP-LEFT2";
-            linux,code = <BTN_TL2>;
-        };
-        sw22 {
-            gpios = <&gpio3 RK_PD1 GPIO_ACTIVE_LOW>;
-            label = "GPIO BTN_START";
-            linux,code = <BTN_START>;
-        };
     };
 
 	spk_amp: audio-amplifier {
@@ -818,7 +857,7 @@
 };
 &pinctrl {
     btns {
-        btn_pins: btn-pins {
+        btn_pins_ctrl: btn-pins-ctrl {
             rockchip,pins =
                 <2 RK_PB5 RK_FUNC_GPIO &pcfg_pull_up>,
                 <2 RK_PB6 RK_FUNC_GPIO &pcfg_pull_up>,
@@ -837,7 +876,13 @@
                 <3 RK_PC7 RK_FUNC_GPIO &pcfg_pull_up>,
                 <3 RK_PD0 RK_FUNC_GPIO &pcfg_pull_up>,
                 <3 RK_PD1 RK_FUNC_GPIO &pcfg_pull_up>;
+
         };
+        btn_pins_vol: btn-pins-vol {
+                rockchip,pins = 
+                    <3 RK_PB0 RK_FUNC_GPIO &pcfg_pull_up>,
+                    <3 RK_PB1 RK_FUNC_GPIO &pcfg_pull_up>;
+            };
     };
 
     headphone {
@@ -862,6 +907,14 @@
         vcc5_usb: vcc5-usb {
             rockchip,pins = <0x03 0x04 0x00 0x9f>;
             phandle = <0xb2>;
+        };
+    };
+    gpio-led {
+        led_pins: led-pins {
+            rockchip,pins =
+				<2 RK_PA0 RK_FUNC_GPIO &pcfg_pull_none>,
+                <2 RK_PA1 RK_FUNC_GPIO &pcfg_pull_none>,
+                <2 RK_PA2 RK_FUNC_GPIO &pcfg_pull_none>;
         };
     };
 
