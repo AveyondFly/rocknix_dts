@@ -110,10 +110,6 @@
 		/* adc mux enable gpio */
 		amux-en-gpios = <&gpio2 RK_PB4 GPIO_ACTIVE_LOW>;
 
-		amux-settle-us = <20>;
-		use-radial-deadzone;
-		center-samples = <64>;
-
 		/* adc calculate scale */
 		button-adc-scale = <2>;
 
