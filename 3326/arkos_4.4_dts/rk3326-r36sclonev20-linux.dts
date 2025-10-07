@@ -34,7 +34,8 @@
 	vol_keys: rg351-keys {
 		compatible = "rockchip,key";
 		io-channels = <&saradc 2>;
-
+		autorepeat;
+		
 		vol-down-key {
 			linux,code = <KEY_VOLUMEDOWN>;
 			label = "volume down";
