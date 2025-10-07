@@ -34,7 +34,7 @@
 	vol_keys: rg351-keys {
 		compatible = "rockchip,key";
 		io-channels = <&saradc 2>;
-
+		autorepeat;
 		vol-down-key {
 			linux,code = <KEY_VOLUMEDOWN>;
 			label = "volume down";
@@ -106,7 +106,7 @@
 		amux-channel-mapping = <2 3 1 0>;
 		/* adc mux select(a,b) gpio */
 		amux-a-gpios = <&gpio2 RK_PC0 GPIO_ACTIVE_LOW>;
-		amux-b-gpios = <&gpio2 RK_PB7 GPIO_ACTIVE_HIGH>;
+		amux-b-gpios = <&gpio2 RK_PB7 GPIO_ACTIVE_LOW>;
 		/* adc mux enable gpio */
 		amux-en-gpios = <&gpio2 RK_PB3 GPIO_ACTIVE_LOW>;
 
