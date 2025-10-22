@@ -369,9 +369,6 @@
 	vcc18_lcd0: vcc18_lcd0 {
 		compatible = "regulator-fixed";
 		regulator-name = "vcc18_lcd0_n";
-		gpio = <&gpio3 RK_PA3 GPIO_ACTIVE_HIGH>;
-		pinctrl-0 = <&vcc18_lcd_n>;
-		pinctrl-names = "default";
 		enable-active-high;
 		regulator-boot-on;
 		regulator-state-mem {
@@ -546,6 +543,7 @@
 		power-supply = <&vcc18_lcd0>;
 		/* LCD reset gpio GPIO3.D3 */
 	        reset-gpios = <&gpio3 RK_PD3 GPIO_ACTIVE_LOW>;
+			enable-gpios = <&gpio3 RK_PA3 GPIO_ACTIVE_HIGH>;
 			prepare-delay-ms = <0x14>;
 			reset-delay-ms = <0x14>;
 			init-delay-ms = <0x14>;
@@ -1324,7 +1322,7 @@
 	};
     vcc18-lcd {
         vcc18_lcd_n: vcc18-lcd-n {
-            rockchip,pins =  <3 RK_PD3 RK_FUNC_GPIO &pcfg_pull_none>;
+            rockchip,pins =  <3 RK_PA3 RK_FUNC_GPIO &pcfg_pull_none>;
         };
     };
 
