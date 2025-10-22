@@ -50,6 +50,10 @@
 
 	joypad: odroidgo3-joypad {
 		compatible = "odroidgo3-joypad";
+		pwms = <&pwm0 0 200000000 0>;
+		pwm-names = "enable";
+		rumble-boost-weak = <0x0000>;
+		rumble-boost-strong = <0x0000>;
 		joypad-name = "GO-Super Gamepad";
 		joypad-product = <0x1100>;
 		joypad-revision = <0x0100>;
@@ -58,7 +62,7 @@
 		/* gpio pincontrol setup */
 		pinctrl-names = "default";
 		pinctrl-0 = <&btn_pins>;
-
+		pinctrl-1 = <&pwm0_pin>;
 		/* Analog mux define */
 		io-channel-names = "amux_adc";
 		io-channels = <&saradc 1>;
@@ -926,20 +930,20 @@
 			vcc_wifi: LDO_REG9 {
 				regulator-always-on;
 				regulator-boot-on;
-				regulator-min-microvolt = <3300000>;
-				regulator-max-microvolt = <3300000>;
+				regulator-min-microvolt = <1500000>;
+				regulator-max-microvolt = <1500000>;
 
-				regulator-name = "vcc_wifi";
+				regulator-name = "vdd1v5_dvp";
 				regulator-state-mem {
 					regulator-off-in-suspend;
-					regulator-suspend-microvolt = <3300000>;
+					regulator-suspend-microvolt = <1500000>;
 				};
 			};
 
 			dcdc_boost: BOOST {
 				regulator-always-on;
 				regulator-boot-on;
-				regulator-min-microvolt = <4700000>;
+				regulator-min-microvolt = <5000000>;
 				regulator-max-microvolt = <5400000>;
 				regulator-name = "boost";
 			};
