@@ -50,6 +50,10 @@
 
 	joypad: odroidgo3-joypad {
 		compatible = "odroidgo3-joypad";
+		pwms = <&pwm0 0 200000000 0>;
+		pwm-names = "enable";
+		rumble-boost-weak = <0x0000>;
+		rumble-boost-strong = <0x0000>;
 		joypad-name = "GO-Super Gamepad";
 		joypad-product = <0x1100>;
 		joypad-revision = <0x0100>;
@@ -58,7 +62,7 @@
 		/* gpio pincontrol setup */
 		pinctrl-names = "default";
 		pinctrl-0 = <&btn_pins>;
-
+		pinctrl-1 = <&pwm0_pin>;
 		/* Analog mux define */
 		io-channel-names = "amux_adc";
 		io-channels = <&saradc 1>;
@@ -298,6 +302,7 @@
 		compatible = "regulator-fixed";
 		regulator-name = "vcc5v0_sys";
 		regulator-always-on;
+		regulator-boot-on;
 		regulator-min-microvolt = <5000000>;
 		regulator-max-microvolt = <5000000>;
 	};
@@ -410,6 +415,28 @@
 		opp-microvolt-L1 = <1350000 1350000 1350000>;
 		opp-microvolt-L2 = <1300000 1300000 1350000>;
 		opp-microvolt-L3 = <1250000 1250000 1350000>;
+		clock-latency-ns = <40000>;
+	};
+
+	opp-1416000000 {
+		opp-hz = /bits/ 64 <1416000000>;
+		opp-microvolt     = <1350000 1350000 1350000>;
+		opp-microvolt-L0  = <1350000 1350000 1350000>;
+		opp-microvolt-L1  = <1350000 1350000 1350000>;
+		opp-microvolt-L2  = <1325000 1325000 1350000>;
+		opp-microvolt-L3  = <1300000 1300000 1350000>;
+		opp-microvolt-L4  = <1250000 1250000 1350000>;
+		clock-latency-ns = <40000>;
+	};
+
+	opp-1512000000 {
+		opp-hz = /bits/ 64 <1512000000>;
+		opp-microvolt     = <1350000 1350000 1350000>;
+		opp-microvolt-L0  = <1350000 1350000 1350000>;
+		opp-microvolt-L1  = <1350000 1350000 1350000>;
+		opp-microvolt-L2  = <1350000 1350000 1350000>;
+		opp-microvolt-L3  = <1325000 1325000 1350000>;
+		opp-microvolt-L4  = <1300000 1300000 1350000>;
 		clock-latency-ns = <40000>;
 	};
 };
@@ -931,8 +958,8 @@
 			zero_algorithm_vol = <3850>;
 			max_soc_offset = <60>;
 			monitor_sec = <5>;
-			virtual_power = <0>;
 			sample_res = <10>;
+			virtual_power = <0>;
 			power_dc2otg = <0>;
 		};
 

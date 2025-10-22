@@ -52,7 +52,10 @@
 
 	joypad: odroidgo2-joypad {
 		compatible = "odroidgo2-joypad";
-
+		pwms = <&pwm0 0 200000000 0>;
+		pwm-names = "enable";
+		rumble-boost-weak = <0x0000>;
+		rumble-boost-strong = <0x0000>;
 		joypad-name = "GO-Advance Gamepad";
 		joypad-product = <0x1000>;
 		joypad-revision = <0x0100>;
@@ -61,7 +64,7 @@
 		/* gpio pincontrol setup */
 		pinctrl-names = "default";
 		pinctrl-0 = <&btn_pins>;
-
+		pinctrl-1 = <&pwm0_pin>;
 		/* JOY_X, JOY_Y Channel define */
 		io-channel-names = "joy_y", "joy_x";
         io-channels = <&saradc 2>,<&saradc 1>;
