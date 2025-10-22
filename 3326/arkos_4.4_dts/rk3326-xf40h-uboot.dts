@@ -40,7 +40,7 @@
 
 	leds: gpio_leds {
 		compatible = "gpio-leds";
-		status = "okay";
+		status = "disabled";
 
 		/* Blue LED : GPIO0_C1 */
 		heartbeat {
@@ -203,13 +203,59 @@
 		enable-delay-ms = <0x78>;
 		disable-delay-ms = <0x14>;
 		unprepare-delay-ms = <0x14>;
-		width-mm = <0x99>;
-		height-mm = <0x55>;
-		dsi,flags = <0xa03>;
-		dsi,format = <0x00>;
-		dsi,lanes = <0x04>;
-		panel-init-sequence = [39 00 04 b9 f1 12 83 39 00 06 b1 00 00 00 da 80 39 00 04 b2 3c 12 30 39 00 0b b3 10 10 28 28 03 ff 00 00 00 00 15 00 02 b4 80 39 00 03 b5 0a 0a 39 00 03 b6 97 97 39 00 05 b8 26 22 f0 13 39 00 1c ba 33 81 05 f9 0e 0e 20 00 00 00 00 00 00 00 44 25 00 90 0a 00 00 01 4f 01 00 00 37 15 00 02 bc 47 39 00 04 bf 02 11 00 39 00 0a c0 73 73 50 50 00 00 12 70 00 39 00 0d c1 25 00 32 32 77 e4 ff ff cc cc 77 77 39 00 07 c6 82 00 bf ff 00 ff 39 00 07 c7 b8 00 0a 00 00 00 39 00 05 c8 10 40 1e 02 15 00 02 cc 0b 39 00 23 e0 00 0b 10 2c 3d 3f 42 3a 07 0d 0f 13 15 13 14 0f 16 00 0b 10 2c 3d 3f 42 3a 07 0d 0f 13 15 13 14 0f 16 39 00 0f e3 07 07 0b 0b 0b 0b 00 00 00 00 ff 00 c0 10 39 00 40 e9 c8 10 0a 00 00 80 81 12 31 23 4f 86 a0 00 47 08 00 00 0c 00 00 00 00 00 0c 00 00 00 98 02 8b af 46 02 88 88 88 88 88 98 13 8b af 57 13 88 88 88 88 88 00 00 00 00 00 00 00 00 00 00 00 00 00 39 00 3e ea 97 0c 09 09 09 78 00 00 00 00 00 00 9f 31 8b a8 31 75 88 88 88 88 88 9f 20 8b a8 20 64 88 88 88 88 88 23 00 00 02 71 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 40 80 81 00 00 00 00 39 00 04 ef ff ff 01 05 fa 01 11 05 32 01 29];
-		panel-exit-sequence = <0x5000128 0x5000110>;
+		width-mm = <153>;
+		height-mm = <85>;
+		dsi,flags  = <(MIPI_DSI_MODE_VIDEO |
+					MIPI_DSI_MODE_VIDEO_BURST |
+					MIPI_DSI_MODE_LPM |
+					MIPI_DSI_MODE_EOT_PACKET)>;
+		dsi,format = <MIPI_DSI_FMT_RGB888>;
+		dsi,lanes = <4>;
+		panel-init-sequence = [
+			/* 基本页/寄存器 */
+			39 00 04 B9 F1 12 83
+			39 00 06 B1 00 00 00 DA 80
+			39 00 04 B2 3C 12 30
+			39 00 0B B3 10 10 28 28 03 FF 00 00 00 00
+			15 00 02 B4 80
+			39 00 03 B5 0A 0A
+			39 00 03 B6 97 97
+			39 00 05 B8 26 22 F0 13
+
+			/* 时序/电源相关 */
+			39 00 1C BA 33 81 05 F9 0E 0E 20 00 00 00 00 00 00 00 44 25 00 90 0A 00 00 01 4F 01 00 00 37
+			15 00 02 BC 47
+			39 00 04 BF 02 11 00
+			39 00 0A C0 73 73 50 50 00 00 12 70 00
+			39 00 0D C1 25 00 32 32 77 E4 FF FF CC CC 77 77
+			39 00 07 C6 82 00 BF FF 00 FF
+			39 00 07 C7 B8 00 0A 00 00 00
+			39 00 05 C8 10 40 1E 02
+			15 00 02 CC 0B
+
+			/* Gamma/色度 */
+			39 00 23 E0 00 0B 10 2C 3D 3F 42 3A 07 0D 0F 13 15 13 14 0F 16
+						00 0B 10 2C 3D 3F 42 3A 07 0D 0F 13 15 13 14 0F 16
+			39 00 0F E3 07 07 0B 0B 0B 0B 00 00 00 00 FF 00 C0 10
+
+			/* 接口/时钟特性块 */
+			39 00 40 E9 C8 10 0A 00 00 80 81 12 31 23 4F 86 A0 00 47 08 00 00 0C 00 00 00 00 00 0C 00 00 00
+						98 02 8B AF 46 02 88 88 88 88 88 98 13 8B AF 57 13 88 88 88 88 88
+						00 00 00 00 00 00 00 00 00 00 00 00 00
+			39 00 3E EA 97 0C 09 09 09 78 00 00 00 00 00 00 9F 31 8B A8 31 75 88 88 88 88 88
+						9F 20 8B A8 20 64 88 88 88 88 88 23 00 00 02 71 00 00 00 00 00 00 00 00 00 00 00 00 00
+						00 00 40 80 81 00 00 00 00
+
+			/* 结束/开屏 */
+			39 00 04 EF FF FF 01
+			05 FA 01 11  /* Sleep Out，延时 ~250ms */
+			05 32 01 29  /* Display On，延时 ~50ms  */
+		];
+
+		panel-exit-sequence = [
+			05 00 01 28  /* Display Off */
+			05 00 01 10  /* Sleep In    */
+		];
 
 		display-timings {
 			native-mode = <&timing0>;
@@ -752,14 +798,11 @@
 
 &pinctrl {
 	pmic {
-		/* ODROID-GO2 : PMIC_INT(GPIO0.PB2) */
 		pmic_int: pmic_int {
 			rockchip,pins =
-				<0 RK_PB2 RK_FUNC_GPIO &pcfg_pull_up>,
-				<0 RK_PB3 RK_FUNC_GPIO &pcfg_pull_none>;
+				<0 RK_PB2 RK_FUNC_GPIO &pcfg_pull_up>;
 		};
 
-		/* ODROID-GO2 : PMIC_SLEEP(GPIO0.PA4) */
 		soc_slppin_gpio: soc_slppin_gpio {
 			rockchip,pins =
 				<0 RK_PA4 RK_FUNC_GPIO &pcfg_output_low>;

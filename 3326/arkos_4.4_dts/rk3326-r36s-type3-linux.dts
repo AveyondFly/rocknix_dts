@@ -2,7 +2,7 @@
 /*
  * Copyright (c) 2025 kk&lcdyk
  *
- * GameConsole HG36
+ * R36S Clone掌机 种类3
  *
  */
 
@@ -16,8 +16,8 @@
 #include "rk3326-linux.dtsi"
 
 / {
-	model = "HG36";
-	compatible = "rockchip,rk3326-hg36-linux", "rockchip,rk3326";
+	model = "GameConsole Clone Type3";
+	compatible = "rockchip,rk3326-r36s-type3-linux", "rockchip,rk3326";
 
 	chosen {
                 bootargs = "";
@@ -35,6 +35,7 @@
 		compatible = "rockchip,key";
 		io-channels = <&saradc 2>;
 		autorepeat;
+		
 		vol-down-key {
 			linux,code = <KEY_VOLUMEDOWN>;
 			label = "volume down";
@@ -67,10 +68,10 @@
 		amux-count = <4>;
 		amux-channel-mapping = <2 3 1 0>;
 		/* adc mux select(a,b) gpio */
-        amux-en-gpios = <&gpio2 RK_PB4 GPIO_ACTIVE_LOW>;   /* rocker0-gpios */
-        /* adc mux select(a,b) gpio */
-        amux-a-gpios = <&gpio2 RK_PC0 GPIO_ACTIVE_LOW>;     /* rocker1-gpios */
-        amux-b-gpios = <&gpio2 RK_PB7 GPIO_ACTIVE_LOW>;     /* rocker-gpios */
+		amux-a-gpios = <&gpio2 RK_PC0 GPIO_ACTIVE_LOW>;
+		amux-b-gpios = <&gpio2 RK_PB7 GPIO_ACTIVE_LOW>;
+		/* adc mux enable gpio */
+		amux-en-gpios = <&gpio2 RK_PB4 GPIO_ACTIVE_LOW>;
 		/* adc calculate scale */
 		button-adc-scale = <2>;
 		/* adc deadzone range  */
@@ -194,7 +195,7 @@
 		rockchip,serial-id = <5>;
 		rockchip,wake-irq = <0>;
 		/* If enable uart uses irq instead of fiq */
-		rockchip,irq-mode-enable = <0>;
+		rockchip,irq-mode-enable = <1>;
 		rockchip,baudrate = <1500000>;  /* Only 115200 and 1500000 */
 		interrupts = <GIC_SPI 127 IRQ_TYPE_LEVEL_LOW>;
 		pinctrl-names = "default";
@@ -258,20 +259,6 @@
     //         gpios = <&gpio0 RK_PC1 GPIO_ACTIVE_HIGH>;
     //         default-state = "off";
     //     };
-
-    //     /* 工作蓝灯：GPIO0_B3 (GPIO0_11) */
-    //     blue_work: blue-work {
-    //         label = "blue:work";
-    //         gpios = <&gpio0 RK_PB3 GPIO_ACTIVE_HIGH>;
-    //         default-state = "off";
-    //     };
-
-    //     /* 工作红灯：GPIO0_B4 (GPIO0_12) */
-    //     red_work: red-work {
-    //         label = "red:work";
-    //         gpios = <&gpio0 RK_PB4 GPIO_ACTIVE_HIGH>;
-    //         default-state = "off";
-    //     };
     // };
 	rk817-sound {
 		compatible = "simple-audio-card";
@@ -318,8 +305,8 @@
     vcc_host: vcc_host {
         compatible = "regulator-fixed";
         regulator-name = "vcc_host";
-        regulator-min-microvolt = <5000000>;
-        regulator-max-microvolt = <5000000>;
+        regulator-min-microvolt = <3300000>;
+        regulator-max-microvolt = <3300000>;
         gpio = <&gpio3 RK_PA4 GPIO_ACTIVE_HIGH>;
 		pinctrl-0 = <&vcc5_usb>;
 		pinctrl-names = "default";
@@ -475,47 +462,180 @@
 		dsi,format = <MIPI_DSI_FMT_RGB888>;
 		dsi,lanes = <4>;
 		panel-init-sequence = [
-			/* 基本页/寄存器 */
-			39 00 04 B9 F1 12 83
-			39 00 06 B1 00 00 00 DA 80
-			39 00 04 B2 00 13 70
-			39 00 0B B3 10 10 28 28 03 FF 00 00 00 00
-			15 00 02 B4 80
-			15 00 03 B5 0A 0A
-			15 00 03 B6 82 82
-			39 00 05 B8 26 62 F0 63
+			/* Page FF=30/52/01 */
+			15 00 02 FF 30
+			15 00 02 FF 52
+			15 00 02 FF 01
+			/* 添加延时 */
+			15 00 02 00 01   /* 延时命令，例如 1ms */
+			15 00 02 E3 00
 
-			/* 时序/电源相关 */
-			39 00 1C BA 33 81 05 F9 0E 0E 20 00 00 00 00 00 00 00
-						44 25 00 90 0A 00 00 01 4F 01 00 00 37
-			15 00 02 BC 47
-			39 00 04 BF 02 11 00
-			39 00 0A C0 73 73 50 50 00 00 12 50 00
-			39 00 0D C1 53 00 32 32 77 D1 CC CC 77 77 33 33
-			39 00 07 C6 82 00 BF FF 00 FF
-			39 00 07 C7 B8 00 0A 00 00 00
-			39 00 05 C8 10 40 1E 02
-			15 00 02 CC 0B
+			/* 电源/时序/偏置等寄存器 */
+			15 00 02 E3 00
+			15 00 02 25 10
+			15 00 02 28 6F
+			15 00 02 29 01
+			15 00 02 2A DF
+			15 00 02 2C 22
+			15 00 02 C3 0F
 
-			/* Gamma/色度 */
-			39 00 23 E0 00 07 0D 37 35 3F 41 44 06 0C 0D 0F 11 10 12 14 1A
-						00 07 0D 37 35 3F 41 44 06 0C 0D 0F 11 10 12 14 1A
-			39 00 0F E3 07 07 0B 0B 0B 0B 00 00 00 00 FF 00 C0 10
+			/* Gamma/驱动相关 */
+			15 00 02 37 9C
+			15 00 02 38 A7
+			15 00 02 39 41
+			15 00 02 80 20
+			15 00 02 91 67
+			15 00 02 92 67
+			15 00 02 A0 55
+			15 00 02 A1 50
+			15 00 02 A3 58
+			15 00 02 A4 9C
+			15 00 02 A7 02
+			15 00 02 A8 01
+			15 00 02 A9 21
+			15 00 02 AA FC
+			15 00 02 AB 28
+			15 00 02 AC 06
+			15 00 02 AD 06
+			15 00 02 AE 06
+			15 00 02 AF 03
+			15 00 02 B0 08
+			15 00 02 B1 26
+			15 00 02 B2 28
+			15 00 02 B3 28
+			15 00 02 B4 03
+			15 00 02 B5 08
+			15 00 02 B6 26
+			15 00 02 B7 08
+			15 00 02 B8 26
+			15 00 02 C0 00
+			15 00 02 C1 00
+			15 00 02 C2 00
 
-			/* 接口/时钟特性块 */
-			39 00 40 E9 C8 10 02 00 00 B0 B1 11 31 23 28 80 B0 B1 27 08
-						00 04 02 00 00 00 00 04 02 00 00 00 88 88 BA 60 24 08
-						88 88 88 88 88 88 88 BA 71 35 18 88 88 88 88 88
-						00 00 00 01 00 00 00 00 00 00 00 00 00
-			39 00 3E EA 97 0A 82 02 03 07 00 00 00 00 00 00 81 88 BA 17 53
-						88 88 88 88 88 88 80 88 BA 06 42 88 88 88 88 88 88
-						23 00 00 02 80 00 00 00 00 00 00 00 00 00 00 00 00 00
-						00 00 00 00 00 00 00 00 00
+			/* 切页 FF=30/52/02 */
+			15 00 02 FF 30
+			15 00 02 FF 52
+			15 00 02 FF 02
 
-			/* 结束/开屏 */
-			39 00 04 EF FF FF 01
-			05 C8 01 11  /* Sleep Out，延时 ~200ms */
-			05 14 01 29  /* Display On，延时 ~20ms  */
+			/* Gamma 正负段配对写入 */
+			15 00 02 B0 02
+			15 00 02 D0 02
+			15 00 02 B1 0F
+			15 00 02 D1 10
+			15 00 02 B2 11
+			15 00 02 D2 12
+			15 00 02 B3 32
+			15 00 02 D3 33
+			15 00 02 B4 36
+			15 00 02 D4 36
+			15 00 02 B5 3C
+			15 00 02 D5 3C
+			15 00 02 B6 20
+			15 00 02 D6 20
+			15 00 02 B7 3E
+			15 00 02 D7 3E
+			15 00 02 B8 0E
+			15 00 02 D8 0D
+			15 00 02 B9 05
+			15 00 02 D9 05
+			15 00 02 BA 11
+			15 00 02 DA 12
+			15 00 02 BB 11
+			15 00 02 DB 11
+			15 00 02 BC 13
+			15 00 02 DC 14
+			15 00 02 BD 14
+			15 00 02 DD 14
+			15 00 02 BE 16
+			15 00 02 DE 18
+			15 00 02 BF 0E
+			15 00 02 DF 0F
+			15 00 02 C0 17
+			15 00 02 E0 17
+			15 00 02 C1 07
+			15 00 02 E1 08
+
+			/* 切页 FF=30/52/03 */
+			15 00 02 FF 30
+			15 00 02 FF 52
+			15 00 02 FF 03
+
+			/* 接口/走线/映射等设置 */
+			15 00 02 08 8A
+			15 00 02 09 8B
+			15 00 02 30 00
+			15 00 02 31 00
+			15 00 02 32 00
+			15 00 02 33 00
+			15 00 02 34 61
+			15 00 02 35 D4
+			15 00 02 36 24
+			15 00 02 37 03
+			15 00 02 40 86
+			15 00 02 41 87
+			15 00 02 42 84
+			15 00 02 43 85
+			15 00 02 44 11
+			15 00 02 45 DE
+			15 00 02 46 DD
+			15 00 02 47 11
+			15 00 02 48 E0
+			15 00 02 49 DF
+			15 00 02 50 82
+			15 00 02 51 83
+			15 00 02 52 80
+			15 00 02 53 81
+			15 00 02 54 11
+			15 00 02 55 E2
+			15 00 02 56 E1
+			15 00 02 57 11
+			15 00 02 58 E4
+			15 00 02 59 E3
+
+			/* 时序细化（左右两路对称） */
+			15 00 02 82 0F
+			15 00 02 83 0F
+			15 00 02 84 00
+			15 00 02 85 0F
+			15 00 02 86 0F
+			15 00 02 87 0E
+			15 00 02 88 0E
+			15 00 02 89 06
+			15 00 02 8A 06
+			15 00 02 8B 07
+			15 00 02 8C 07
+			15 00 02 8D 04
+			15 00 02 8E 04
+			15 00 02 8F 05
+			15 00 02 90 05
+
+			15 00 02 98 0F
+			15 00 02 99 0F
+			15 00 02 9A 00
+			15 00 02 9B 0F
+			15 00 02 9C 0F
+			15 00 02 9D 0E
+			15 00 02 9E 0E
+			15 00 02 9F 06
+			15 00 02 A0 06
+			15 00 02 A1 07
+			15 00 02 A2 07
+			15 00 02 A3 04
+			15 00 02 A4 04
+			15 00 02 A5 05
+			15 00 02 A6 05
+
+			/* 切回 0xFF=30/52，回到页 0；设置 MADCTL=0x02 */
+			15 00 02 E0 02
+			15 00 02 E1 52
+			15 00 02 FF 30
+			15 00 02 FF 52
+			15 00 02 FF 00
+			15 00 02 36 02
+
+			/* 上电两步 */
+			05 C8 01 11  /* Sleep Out,  delay ~200ms */
+			05 64 01 29  /* Display On, delay ~20ms  */
 		];
 
 		panel-exit-sequence = [
@@ -523,20 +643,19 @@
 			05 00 01 10  /* Sleep In    */
 		];
 
-
 		display-timings {
 			native-mode = <&timing0>;
 
-			timing0: 58_5Hz {
+			timing0: 80Hz {
 				clock-frequency = <30000000>;
 				hactive = <640>;
 				vactive = <480>;
-				hfront-porch = <150>;
-				hsync-len = <50>;
-				hback-porch = <150>;
-				vfront-porch = <20>;
-				vsync-len = <6>;
-				vback-porch = <12>;
+				hfront-porch = <46>;
+				hsync-len = <2>;
+				hback-porch = <44>;
+				vfront-porch = <16>;
+				vsync-len = <2>;
+				vback-porch = <14>;
 				hsync-active = <0>;
 				vsync-active = <0>;
 				de-active = <0>;
@@ -957,9 +1076,9 @@
 				3570 3610 3650 3690 3720 3750 3790 
 				3830 3870 3910 3940 3967 4001 4046
 			>;
-			design_capacity = <2808>;
-			design_qmax = <3089>;
-			bat_res = <150>;
+			design_capacity = <1848>;
+			design_qmax = <2033>;
+			bat_res = <154>;
 			sleep_enter_current = <300>;
 			sleep_exit_current = <300>;
 			sleep_filter_current = <100>;
@@ -1199,7 +1318,7 @@
 };
 
 &pinctrl {
-
+	
 	pcfg_pull_up_8_6ma: pcfg-pull-up-8-6ma  {
 		bias-pull-up;
 		drive-strength = <8>;
@@ -1237,7 +1356,7 @@
             rockchip,pins = <1 RK_PB3 RK_FUNC_2 &pcfg_pull_none>;
         };
     };
-	
+
 	pmic {
 		pmic_int: pmic_int {
 			rockchip,pins =
@@ -1267,7 +1386,7 @@
 
     vcc5-usb {
         vcc5_usb: vcc5-usb {
-            rockchip,pins = <3 RK_PA4 RK_FUNC_GPIO &pcfg_pull_none>;
+            rockchip,pins = <3 RK_PA4 RK_FUNC_GPIO &pcfg_pull_up>;
         };
     };
 
@@ -1275,33 +1394,30 @@
 	// 	led_pins: led-pins {
 	// 		rockchip,pins =
 	// 			<0 RK_PA0 RK_FUNC_GPIO &pcfg_pull_none>, /* charge blue  */
-	// 			<0 RK_PC1 RK_FUNC_GPIO &pcfg_pull_none>, /* charge red   */
-	// 			<0 RK_PB3 RK_FUNC_GPIO &pcfg_pull_none>, /* work blue    */
-	// 			<0 RK_PB4 RK_FUNC_GPIO &pcfg_pull_none>; /* work red     */
+	// 			<0 RK_PC1 RK_FUNC_GPIO &pcfg_pull_none>; /* charge red   */
 	// 	};
 	// };
 	btns {
 		btn_pins: btn-pins {
 		rockchip,pins =
-			<3 RK_PB3 RK_FUNC_GPIO &pcfg_pull_up>, 
-			<3 RK_PB4 RK_FUNC_GPIO &pcfg_pull_up>, 
-			<3 RK_PB5 RK_FUNC_GPIO &pcfg_pull_up>, 
-			<3 RK_PB6 RK_FUNC_GPIO &pcfg_pull_up>, 
-			<3 RK_PC0 RK_FUNC_GPIO &pcfg_pull_up>, 
-			<3 RK_PC1 RK_FUNC_GPIO &pcfg_pull_up>, 
+			<3 RK_PB3 RK_FUNC_GPIO &pcfg_pull_up>,
+			<3 RK_PB4 RK_FUNC_GPIO &pcfg_pull_up>,
+			<3 RK_PB5 RK_FUNC_GPIO &pcfg_pull_up>,
+			<3 RK_PB6 RK_FUNC_GPIO &pcfg_pull_up>,
+			<3 RK_PC0 RK_FUNC_GPIO &pcfg_pull_up>,
+			<3 RK_PC1 RK_FUNC_GPIO &pcfg_pull_up>,
 			<3 RK_PC2 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PC3 RK_FUNC_GPIO &pcfg_pull_up>, 
-			<3 RK_PC4 RK_FUNC_GPIO &pcfg_pull_up>, 
-			<3 RK_PC5 RK_FUNC_GPIO &pcfg_pull_up>, 
-			<3 RK_PC6 RK_FUNC_GPIO &pcfg_pull_up>, 
-			<3 RK_PC7 RK_FUNC_GPIO &pcfg_pull_up>, 
-			<3 RK_PD0 RK_FUNC_GPIO &pcfg_pull_up>, 
-			<3 RK_PD1 RK_FUNC_GPIO &pcfg_pull_up>, 
-			<3 RK_PD2 RK_FUNC_GPIO &pcfg_pull_up>, 
-			<3 RK_PD3 RK_FUNC_GPIO &pcfg_pull_up>, 
-			<2 RK_PB5 RK_FUNC_GPIO &pcfg_pull_up>, 
-			<2 RK_PB6 RK_FUNC_GPIO &pcfg_pull_up>, 
-			<3 RK_PB2 RK_FUNC_GPIO &pcfg_pull_up>;
+			<3 RK_PC3 RK_FUNC_GPIO &pcfg_pull_up>,
+			<3 RK_PC4 RK_FUNC_GPIO &pcfg_pull_up>,
+			<3 RK_PC5 RK_FUNC_GPIO &pcfg_pull_up>,
+			<3 RK_PC6 RK_FUNC_GPIO &pcfg_pull_up>,
+			<3 RK_PC7 RK_FUNC_GPIO &pcfg_pull_up>,
+			<3 RK_PD0 RK_FUNC_GPIO &pcfg_pull_up>,
+			<3 RK_PD1 RK_FUNC_GPIO &pcfg_pull_up>,
+			<3 RK_PB2 RK_FUNC_GPIO &pcfg_pull_up>,
+			<3 RK_PB7 RK_FUNC_GPIO &pcfg_pull_up>,
+			<2 RK_PB5 RK_FUNC_GPIO &pcfg_pull_up>,
+			<2 RK_PB6 RK_FUNC_GPIO &pcfg_pull_up>;
 		};
 	};
 	headphone {
