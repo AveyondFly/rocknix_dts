@@ -13,8 +13,8 @@
 #include "rk3326.dtsi"
 
 / {
-    model = "Clone R36s G28";
-    compatible = "g28,r36s", "rockchip,rk3326";
+    model = "Clone R36s Type2 With Amplifier";
+    compatible = "xifan,r36s", "rockchip,rk3326";
      
     aliases {
         mmc2 = &sdio;
@@ -294,11 +294,21 @@
 			linux,code = <BTN_TL2>;
 		};
 	};
+
+	spk_amp: audio-amplifier {
+		compatible = "simple-audio-amplifier";
+		enable-gpios = <&gpio3 RK_PA7 GPIO_ACTIVE_HIGH>;
+		pinctrl-0 = <&spk_amp_enable_h>;
+		pinctrl-names = "default";
+		sound-name-prefix = "Speaker Amp";
+	};
+
     rk817-sound {
        compatible = "simple-audio-card";
        pinctrl-names = "default";
        pinctrl-0 = <&hp_det>;
-       simple-audio-card,name = "rk817_int";
+       simple-audio-card,name = "rk817_ext";
+       simple-audio-card,aux-devs = <&spk_amp>;
        simple-audio-card,format = "i2s";
        simple-audio-card,hp-det-gpio = <&gpio2 RK_PC6 GPIO_ACTIVE_LOW>;
        simple-audio-card,mclk-fs = <256>;
@@ -848,6 +858,7 @@
 			<2 RK_PB7 RK_FUNC_GPIO &pcfg_pull_up>,
 			<2 RK_PC0 RK_FUNC_GPIO &pcfg_pull_up>,
 			<2 RK_PB3 RK_FUNC_GPIO &pcfg_pull_up>;
+
 	};
       };
     headphone {
@@ -904,6 +915,12 @@
         };
    };
 
+	speaker {
+		spk_amp_enable_h: spk-amp-enable-h {
+			rockchip,pins =
+				<3 RK_PA7 RK_FUNC_GPIO &pcfg_pull_none>;
+		};
+	};
 		sdio-pwrseq {
 
 			wifi-enable-h {
