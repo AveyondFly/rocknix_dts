@@ -12,7 +12,7 @@
 #include "rk3326.dtsi"
 
 / {
-    model = "Clone R36s Type C";
+    model = "Clone R36s Type 3";
     compatible = "typec,r36s", "rockchip,rk3326";
 
     aliases {
