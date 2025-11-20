@@ -2,7 +2,7 @@
 /*
 * Copyright (c) 2025 kk&lcdyk
 *
-* 稀范科技 R36Pro
+* Kinhank K36 原始屏幕
 *
 */
 
@@ -16,8 +16,8 @@
 #include "rk3326-linux.dtsi"
 
 / {
-	model = "XiFan R36Pro";
-	compatible = "rockchip,rk3326-r36pro-linux", "rockchip,rk3326";
+	model = "K36";
+	compatible = "rockchip,rk3326-k36-linux", "rockchip,rk3326";
 	
 	chosen {
 		bootargs = "";
@@ -107,6 +107,8 @@
 		poll-interval = <10>;
 		invert-absx;
 		invert-absy;
+		invert-absrx;
+		invert-absry;
 		sw1 {
 			gpios = <&gpio3 RK_PC6 GPIO_ACTIVE_LOW>;
 			label = "GPIO DPAD-UP";
@@ -444,11 +446,6 @@
 	status = "okay";
 };
 
-&route_dsi {
-	connect = <&vopb_out_dsi>;
-	status = "okay";
-};
-
 &dfi {
 	status = "okay";
 };
@@ -467,11 +464,6 @@
 	// opp-786000000 {
 	// 	status = "okay";
 	// };
-};
-
-&gpu_opp_table {
-	/delete-node/ opp-200000000;
-	/delete-node/ opp-300000000;
 };
 
 &emmc {
@@ -501,14 +493,15 @@
 	num-slots = <1>;
 };
 
-&sfc {
-	status = "disabled";
-};
-
 &gpu {
 	operating-points-v2 = <&gpu_opp_table>;
 	mali-supply = <&vdd_logic>;
 	status = "okay";
+};
+
+&gpu_opp_table {
+	/delete-node/ opp-200000000;
+	/delete-node/ opp-300000000;
 };
 
 &i2c0 {
@@ -790,9 +783,9 @@
 			3570 3610 3650 3690 3720 3750 3790
 			3830 3870 3910 3940 3967 4001 4046
 			>;
-			design_capacity = <1848>;
-			design_qmax = <2033>;
-			bat_res = <154>;
+			design_capacity = <2808>;
+			design_qmax = <3089>;
+			bat_res = <150>;
 			sleep_enter_current = <300>;
 			sleep_exit_current = <300>;
 			sleep_filter_current = <100>;
@@ -829,9 +822,8 @@
 			clock-names = "mclk";
 			pinctrl-names = "default";
 			pinctrl-0 = <&i2s1_2ch_mclk>;
-			spk-ctl-gpios = <&gpio3 RK_PA7 GPIO_ACTIVE_HIGH>;
-			spk-mute-delay-ms = <50>;
-			use-ext-amplifier;
+			// spk-ctl-gpios = <&gpio3 RK_PA7 GPIO_ACTIVE_HIGH>;
+			// spk-mute-delay-ms = <50>;
 			hp-volume = <20>;
 			spk-volume = <3>;
 			status = "okay";
@@ -881,14 +873,6 @@
 	status = "disabled";
 };
 
-&rkisp1 {
-	status = "disabled";
-};
-
-&spi0 {
-	status = "disabled";
-};
-
 &pmu_io_domains {
 	/* PMU GRF Register Voltage select control */
 	status = "okay";
@@ -909,6 +893,15 @@
 	status = "okay";
 };
 
+&route_dsi {
+	connect = <&vopb_out_dsi>;
+	status = "okay";
+};
+
+&rkisp1 {
+	status = "disabled";
+};
+
 &rk_rga {
 	status = "okay";
 };
@@ -916,6 +909,14 @@
 &rockchip_suspend {
 	status = "okay";
 	rockchip,sleep-debug-en = <1>;
+};
+
+&sfc {
+	status = "disabled";
+};
+
+&spi0 {
+	status = "disabled";
 };
 
 &saradc {

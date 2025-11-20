@@ -24,11 +24,8 @@
 	};
 	
 	aliases {
-		serial0 = "/serial@ff178000";
-		serial5 = "/serial@ff030000";
 		mmc0 = &sdmmc;   /* ff370000：外置 microSD */
 		mmc1 = &sdio;   /* ff380000：SDIO Wi-Fi */
-		mmc2 = &emmc;   /* ff390000：eMMC */
 	};
 
 	gpio_keys: odroidgo2-keys {
@@ -56,9 +53,9 @@
 		pwm-names = "enable";
 		rumble-boost-weak = <0x0000>;
 		rumble-boost-strong = <0x0000>;
-		joypad-name = "GO-Advance Gamepad";
+		joypad-name = "GO-Advance Gamepad (rev 1.1)";
 		joypad-product = <0x1000>;
-		joypad-revision = <0x0100>;
+		joypad-revision = <0x0101>;
 
 		status = "okay";
 		/* gpio pincontrol setup */
@@ -169,6 +166,16 @@
 			label = "GPIO BTN_TR";
 			linux,code = <BTN_TR>;
 		};
+		sw20 {
+			gpios = <&gpio2 RK_PA3 GPIO_ACTIVE_LOW>; //占位用
+			label = "GPIO BTN-VOLUP";
+			linux,code = <BTN_TL2>;
+		};
+		sw21 {
+			gpios = <&gpio2 RK_PD2 GPIO_ACTIVE_LOW>; //占位用
+			label = "GPIO BTN-VOLDN";
+			linux,code = <BTN_TR2>;
+		};
 	};
 
 	fiq-debugger {
@@ -181,11 +188,12 @@
 		interrupts = <GIC_SPI 127 IRQ_TYPE_LEVEL_LOW>;
 		pinctrl-names = "default";
 		pinctrl-0 = <&uart5_xfer>;
-		status = "disabled";
+		status = "okay";
 	};
 
 	backlight: backlight {
 		compatible = "pwm-backlight";
+		power-supply = <&vcc_backlight>;
 		pwms = <&pwm1 0 25000 0>;
 		brightness-levels = <
 			  0   1   2   3   4   5   6   7
@@ -302,13 +310,19 @@
 		compatible = "regulator-fixed";
 		regulator-name = "vcc5v0_sys";
 		regulator-always-on;
-		regulator-boot-on;
+		// regulator-boot-on;
 		regulator-min-microvolt = <5000000>;
 		regulator-max-microvolt = <5000000>;
 	};
+	
 	vcc18_lcd0: vcc18_lcd0 {
 		compatible = "regulator-fixed";
 		regulator-name = "vcc18_lcd0_n";
+		regulator-min-microvolt = <1800000>;
+		regulator-max-microvolt = <1800000>;
+		gpio = <&gpio0 RK_PB5 GPIO_ACTIVE_HIGH>;
+		pinctrl-0 = <&vcc18_lcd_n>;
+		pinctrl-names = "default";
 		enable-active-high;
 		regulator-boot-on;
 		regulator-state-mem {
@@ -326,7 +340,7 @@
 		pinctrl-names = "default";
         enable-active-high;
         regulator-always-on;
-        regulator-boot-on;
+		// regulator-boot-on;
         vin-supply = <&dcdc_boost>;
     };
 };
@@ -345,100 +359,13 @@
 
 	/* bin scaling clock 1.296MHz */
 	rockchip,bin-scaling-sel = <
-		0	10
-		1	13
-		2	16
-		3	20
+		0               13
+		1               13
 	>;
 
 	/delete-node/ opp-408000000;
 	/delete-node/ opp-600000000;
-	/delete-node/ opp-696000000;
-	/delete-node/ opp-1416000000;
-	/delete-node/ opp-1512000000;
-
-	opp-816000000 {
-		opp-hz = /bits/ 64 <816000000>;
-		opp-microvolt = <1050000 1050000 1350000>;
-		opp-microvolt-L0 = <1050000 1050000 1350000>;
-		opp-microvolt-L1 = <1000000 1000000 1350000>;
-		opp-microvolt-L2 = <1000000 1000000 1350000>;
-		opp-microvolt-L3 = <950000  950000  1350000>;
-		clock-latency-ns = <40000>;
-		opp-suspend;
-	};
-
-	opp-912000000 {
-		opp-hz = /bits/ 64 <912000000>;
-		opp-microvolt = <1125000 1125000 1350000>;
-		opp-microvolt-L0 = <1125000 1125000 1350000>;
-		opp-microvolt-L1 = <1075000 1075000 1350000>;
-		opp-microvolt-L2 = <1075000 1075000 1350000>;
-		opp-microvolt-L3 = <1000000 1000000 1350000>;
-		clock-latency-ns = <40000>;
-	};
-
-	opp-1008000000 {
-		opp-hz = /bits/ 64 <1008000000>;
-		opp-microvolt = <1175000 1175000 1350000>;
-		opp-microvolt-L0 = <1175000 1175000 1350000>;
-		opp-microvolt-L1 = <1125000 1125000 1350000>;
-		opp-microvolt-L2 = <1125000 1125000 1350000>;
-		opp-microvolt-L3 = <1050000 1050000 1350000>;
-		clock-latency-ns = <40000>;
-	};
-
-	opp-1200000000 {
-		opp-hz = /bits/ 64 <1200000000>;
-		opp-microvolt = <1300000 1300000 1350000>;
-		opp-microvolt-L0 = <1300000 1300000 1350000>;
-		opp-microvolt-L1 = <1275000 1275000 1350000>;
-		opp-microvolt-L2 = <1250000 1250000 1350000>;
-		opp-microvolt-L3 = <1200000 1200000 1350000>;
-		clock-latency-ns = <40000>;
-	};
-
-	opp-1248000000 {
-		opp-hz = /bits/ 64 <1248000000>;
-		opp-microvolt = <1350000 1350000 1350000>;
-		opp-microvolt-L0 = <1350000 1350000 1350000>;
-		opp-microvolt-L1 = <1300000 1300000 1350000>;
-		opp-microvolt-L2 = <1275000 1275000 1350000>;
-		opp-microvolt-L3 = <1225000 1225000 1350000>;
-		clock-latency-ns = <40000>;
-	};
-
-	opp-1296000000 {
-		opp-hz = /bits/ 64 <1296000000>;
-		opp-microvolt = <1350000 1350000 1350000>;
-		opp-microvolt-L0 = <1350000 1350000 1350000>;
-		opp-microvolt-L1 = <1350000 1350000 1350000>;
-		opp-microvolt-L2 = <1300000 1300000 1350000>;
-		opp-microvolt-L3 = <1250000 1250000 1350000>;
-		clock-latency-ns = <40000>;
-	};
-
-	opp-1416000000 {
-		opp-hz = /bits/ 64 <1416000000>;
-		opp-microvolt     = <1350000 1350000 1350000>;
-		opp-microvolt-L0  = <1350000 1350000 1350000>;
-		opp-microvolt-L1  = <1350000 1350000 1350000>;
-		opp-microvolt-L2  = <1325000 1325000 1350000>;
-		opp-microvolt-L3  = <1300000 1300000 1350000>;
-		opp-microvolt-L4  = <1250000 1250000 1350000>;
-		clock-latency-ns = <40000>;
-	};
-
-	opp-1512000000 {
-		opp-hz = /bits/ 64 <1512000000>;
-		opp-microvolt     = <1350000 1350000 1350000>;
-		opp-microvolt-L0  = <1350000 1350000 1350000>;
-		opp-microvolt-L1  = <1350000 1350000 1350000>;
-		opp-microvolt-L2  = <1350000 1350000 1350000>;
-		opp-microvolt-L3  = <1325000 1325000 1350000>;
-		opp-microvolt-L4  = <1300000 1300000 1350000>;
-		clock-latency-ns = <40000>;
-	};
+	/delete-node/ opp-816000000;
 };
 
 &display_subsystem {
@@ -454,13 +381,13 @@
 		/* pwm1 backlight */
 		backlight = <&backlight>;
 		/* RK817 LDO7 */
-		backlight-supply = <&vcc_backlight>;
+		// backlight-supply = <&vcc_backlight>;
 		/* RK817 LDO8 */
 		power-supply = <&vcc18_lcd0>;
 		/* LCD reset gpio GPIO3.B7 */
 		reset-gpios = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
 		/* power-supply-gpio GPIO0.B5  */
-		enable-gpios = <&gpio0 RK_PB5 GPIO_ACTIVE_HIGH>;
+		// enable-gpios = <&gpio0 RK_PB5 GPIO_ACTIVE_HIGH>;
 		prepare-delay-ms = <20>;
 		reset-delay-ms = <20>;
 		init-delay-ms = <20>;
@@ -475,61 +402,30 @@
 					MIPI_DSI_MODE_EOT_PACKET)>;
 		dsi,format = <MIPI_DSI_FMT_RGB888>;
 		dsi,lanes = <4>;
-		panel-init-sequence = [
-			/* 基本页/寄存器 */
-			39 00 04 B9 F1 12 83
-			39 00 06 B1 00 00 00 DA 80
-			39 00 04 B2 00 13 70
-			39 00 0B B3 10 10 28 28 03 FF 00 00 00 00
-			15 00 02 B4 80
-			15 00 03 B5 0A 0A
-			15 00 03 B6 82 82
-			39 00 05 B8 26 62 F0 63
-
-			/* 时序/电源相关 */
-			39 00 1C BA 33 81 05 F9 0E 0E 20 00 00 00 00 00 00 00
-						44 25 00 90 0A 00 00 01 4F 01 00 00 37
-			15 00 02 BC 47
-			39 00 04 BF 02 11 00
-			39 00 0A C0 73 73 50 50 00 00 12 50 00
-			39 00 0D C1 53 00 32 32 77 D1 CC CC 77 77 33 33
-			39 00 07 C6 82 00 BF FF 00 FF
-			39 00 07 C7 B8 00 0A 00 00 00
-			39 00 05 C8 10 40 1E 02
-			15 00 02 CC 0B
-
-			/* Gamma/色度 */
-			39 00 23 E0 00 07 0D 37 35 3F 41 44 06 0C 0D 0F 11 10 12 14 1A
-						00 07 0D 37 35 3F 41 44 06 0C 0D 0F 11 10 12 14 1A
-			39 00 0F E3 07 07 0B 0B 0B 0B 00 00 00 00 FF 00 C0 10
-
-			39 00 40 E9 C8 10 02 00 00 B0 B1 11 31 23 28 80 B0 B1 27 08
-						00 04 02 00 00 00 00 04 02 00 00 00 88 88 BA 60 24 08
-						88 88 88 88 88 88 88 BA 71 35 18 88 88 88 88 88
-						00 00 00 01 00 00 00 00 00 00 00 00 00
-
-			/* 接口/时钟特性块 */
-			39 00 3E EA 97 0A 82 02 03 07 00 00 00 00 00 00 81 88 BA 17 53
-						88 88 88 88 88 88 80 88 BA 06 42 88 88 88 88 88 88
-						23 00 00 02 80 00 00 00 00 00 00 00 00 00 00 00 00 00
-						00 00 00 00 00 00 00 00 00
-
-			/* 结束/开屏 */
-			39 00 04 EF FF FF 01
-			05 C8 01 11  /* Sleep Out,  delay ~200ms */
-			05 14 01 29  /* Display On, delay ~20ms  */
-		];
-
-		panel-exit-sequence = [
-			05 00 01 28  /* Display Off */
-			05 00 01 10  /* Sleep In    */
-		];
-
+		panel-init-sequence = [39 00 04 b9 f1 12 83 39 00 06 b1 00 00 00 da 80 39 00 04 b2 00 13 70 39 00 0b b3 10 10 28 28 03 ff 00 00 00 00 15 00 02 b4 80 15 00 03 b5 0a 0a 15 00 03 b6 82 82 39 00 05 b8 26 62 f0 63 39 00 1c ba 33 81 05 f9 0e 0e 20 00 00 00 00 00 00 00 44 25 00 90 0a 00 00 01 4f 01 00 00 37 15 00 02 bc 47 39 00 04 bf 02 11 00 39 00 0a c0 73 73 50 50 00 00 12 50 00 39 00 0d c1 53 00 32 32 77 d1 cc cc 77 77 33 33 39 00 07 c6 82 00 bf ff 00 ff 39 00 07 c7 b8 00 0a 00 00 00 39 00 05 c8 10 40 1e 02 15 00 02 cc 0b 39 00 23 e0 00 07 0d 37 35 3f 41 44 06 0c 0d 0f 11 10 12 14 1a 00 07 0d 37 35 3f 41 44 06 0c 0d 0f 11 10 12 14 1a 39 00 0f e3 07 07 0b 0b 0b 0b 00 00 00 00 ff 00 c0 10 39 00 40 e9 c8 10 02 00 00 b0 b1 11 31 23 28 80 b0 b1 27 08 00 04 02 00 00 00 00 04 02 00 00 00 88 88 ba 60 24 08 88 88 88 88 88 88 88 ba 71 35 18 88 88 88 88 88 00 00 00 01 00 00 00 00 00 00 00 00 00 39 00 3e ea 97 0a 82 02 03 07 00 00 00 00 00 00 81 88 ba 17 53 88 88 88 88 88 88 80 88 ba 06 42 88 88 88 88 88 88 23 00 00 02 80 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 39 00 04 ef ff ff 01 05 c8 01 11 05 14 01 29];
+		panel-exit-sequence = <0x5000128 0x5000110>;
 
 		display-timings {
 			native-mode = <&timing0>;
 
-			timing0: 58_5Hz {
+			timing0: adjust {
+				clock-frequency = <30000000>;
+				hactive        = <640>;
+				vactive        = <480>;
+				hfront-porch   = <80>;
+				hsync-len      = <4>;
+				hback-porch    = <76>;
+				vfront-porch   = <72>;
+				vsync-len      = <9>;
+				vback-porch    = <64>;
+				hsync-active   = <0>;
+				vsync-active   = <0>;
+				de-active      = <0>;
+				pixelclk-active = <0>;
+				
+			};
+			
+			timing1: origin {
 				clock-frequency = <30000000>;
 				hactive = <640>;
 				vactive = <480>;
@@ -552,49 +448,39 @@
 	status = "okay";
 };
 
+&route_dsi {
+	connect = <&vopb_out_dsi>;
+	status = "okay";
+};
+
 &dfi {
-	status = "disabled";
+	status = "okay";
 };
 
 &dmc {
-	status = "disabled";
+    operating-points-v2 = <&dmc_opp_table>;
+    center-supply = <&vdd_logic>;
+	status = "okay";
 };
-
 
 &dmc_opp_table {
 	/delete-node/ opp-194000000;
 	/delete-node/ opp-328000000;
-	/delete-node/ opp-786000000;
+	/delete-node/ opp-450000000;
+	
+	// opp-786000000 {
+	// 	status = "okay";
+	// };
+};
 
-	opp-450000000 {
-		opp-hz = /bits/ 64 <450000000>;
-		opp-microvolt = <950000>;
-	};
-
-	opp-528000000 {
-		opp-hz = /bits/ 64 <528000000>;
-		opp-microvolt = <975000>;
-	};
-
-	opp-666000000 {
-		opp-hz = /bits/ 64 <666000000>;
-		opp-microvolt = <1050000>;
-	};
-
-	opp-786000000 {
-		opp-hz = /bits/ 64 <786000000>;
-		opp-microvolt = <1150000>;
-	};
-
-	opp-840000000 {
-		opp-hz = /bits/ 64 <840000000>;
-		opp-microvolt = <1150000>;
-	};
+&gpu_opp_table {
+	/delete-node/ opp-200000000;
+	/delete-node/ opp-300000000;
 };
 
 &emmc {
     compatible = "rockchip,px30-dw-mshc", "rockchip,rk3288-dw-mshc";
-    status = "okay";
+    status = "disabled";
     bus-width = <8>;
     non-removable;
     disable-wp;
@@ -619,62 +505,14 @@
     num-slots = <1>;
 };
 
-&gpu {
-	mali-supply = <&vdd_logic>;
-	status = "okay";
+&sfc {
+	status = "disabled";
 };
 
-&gpu_opp_table {
-	/delete-node/ opp-200000000;
-	/delete-node/ opp-300000000;
-	/delete-node/ opp-520000000;
-
-	opp-400000000 {
-		opp-hz = /bits/ 64 <400000000>;
-		opp-microvolt = <1050000>;
-		opp-microvolt-L0 = <1050000>;
-		opp-microvolt-L1 = <1025000>;
-		opp-microvolt-L2 = <975000>;
-		opp-microvolt-L3 = <950000>;
-	};
-	opp-480000000 {
-		opp-hz = /bits/ 64 <480000000>;
-		opp-microvolt = <1125000>;
-		opp-microvolt-L0 = <1125000>;
-		opp-microvolt-L1 = <1100000>;
-		opp-microvolt-L2 = <1050000>;
-		opp-microvolt-L3 = <1000000>;
-	};
-
-	opp-520000000 {
-		opp-hz = /bits/ 64 <520000000>;
-		opp-microvolt = <1150000>;
-		opp-microvolt-L0 = <1150000>;
-		opp-microvolt-L1 = <1150000>;
-		opp-microvolt-L2 = <1100000>;
-		opp-microvolt-L3 = <1050000>;
-		status = "disabled";
-	};
-
-	opp-540000000 {
-		opp-hz = /bits/ 64 <540000000>;
-		opp-microvolt = <1150000>;
-		opp-microvolt-L0 = <1150000>;
-		opp-microvolt-L1 = <1150000>;
-		opp-microvolt-L2 = <1100000>;
-		opp-microvolt-L3 = <1050000>;
-		status = "disabled";
-	};
-
-	opp-560000000 {
-		opp-hz = /bits/ 64 <560000000>;
-		opp-microvolt = <1150000>;
-		opp-microvolt-L0 = <1150000>;
-		opp-microvolt-L1 = <1150000>;
-		opp-microvolt-L2 = <1100000>;
-		opp-microvolt-L3 = <1050000>;
-		status = "disabled";
-	};
+&gpu {
+	operating-points-v2 = <&gpu_opp_table>;
+	mali-supply = <&vdd_logic>;
+	status = "okay";
 };
 
 &i2c0 {
@@ -769,8 +607,7 @@
 				regulator-always-on;
 				regulator-boot-on;
 				regulator-min-microvolt = <950000>;
-				regulator-max-microvolt = <1350000>;
-				regulator-init-microvolt = <1150000>;
+				regulator-max-microvolt = <1150000>;
 				regulator-ramp-delay = <6001>;
 				regulator-initial-mode = <0x2>;
 				regulator-name = "vdd_logic";
@@ -785,7 +622,6 @@
 				regulator-boot-on;
 				regulator-min-microvolt = <950000>;
 				regulator-max-microvolt = <1350000>;
-				regulator-init-microvolt = <1250000>;
 				regulator-ramp-delay = <6001>;
 				regulator-initial-mode = <0x2>;
 				regulator-name = "vdd_arm";
@@ -844,7 +680,7 @@
 				};
 			};
 
-			vdd1v0_soc: LDO_REG3 {
+			vcc1v0_soc: LDO_REG3 {
 				regulator-always-on;
 				regulator-boot-on;
 				regulator-min-microvolt = <1000000>;
@@ -857,7 +693,7 @@
 				};
 			};
 
-			vcc3v3_pmu: LDO_REG4 {
+			vcc3v0_pmu: LDO_REG4 {
 				regulator-always-on;
 				regulator-boot-on;
 				regulator-min-microvolt = <3000000>;
@@ -867,7 +703,6 @@
 				regulator-state-mem {
 					regulator-on-in-suspend;
 					regulator-suspend-microvolt = <3000000>;
-
 				};
 			};
 
@@ -875,24 +710,25 @@
 				regulator-always-on;
 				regulator-boot-on;
 				regulator-min-microvolt = <1800000>;
-				regulator-max-microvolt = <3300000>;
+				regulator-max-microvolt = <1800000>;
 
 				regulator-name = "vccio_sd";
 				regulator-state-mem {
 					regulator-on-in-suspend;
-					regulator-suspend-microvolt = <3300000>;
+					regulator-suspend-microvolt = <1800000>;
 				};
 			};
 
 			vcc_sd: LDO_REG6 {
-				regulator-min-microvolt = <3300000>;
-				regulator-max-microvolt = <3300000>;
-
+				regulator-min-microvolt = <1800000>;
+				regulator-max-microvolt = <3000000>;
+				regulator-always-on;
+				regulator-boot-on;
+				
 				regulator-name = "vcc_sd";
 				regulator-state-mem {
 					regulator-on-in-suspend;
-					regulator-suspend-microvolt = <3300000>;
-
+					regulator-suspend-microvolt = <3000000>;
 				};
 			};
 
@@ -902,11 +738,11 @@
 				regulator-boot-on;
 				regulator-min-microvolt = <1800000>;
 				regulator-max-microvolt = <3300000>;
-
-				regulator-name = "vcc2v8_dvp";
+				regulator-init-microvolt = <3000000>;
+				regulator-name = "vcc_backlight";
 				regulator-state-mem {
 					regulator-on-in-suspend;
-					regulator-suspend-microvolt = <3300000>;
+					regulator-suspend-microvolt = <3000000>;
 				};
 			};
 
@@ -917,14 +753,14 @@
 				regulator-min-microvolt = <3300000>;
 				regulator-max-microvolt = <3300000>;
 
-				regulator-name = "vcc1v8_dvp";
+				regulator-name = "vcc3v0_dvp";
 				regulator-state-mem {
 					regulator-on-in-suspend;
 					regulator-suspend-microvolt = <3300000>;
 				};
 			};
 
-			vcc_wifi: LDO_REG9 {
+			vdd1v5_dvp: LDO_REG9 {
 				regulator-always-on;
 				regulator-boot-on;
 				regulator-min-microvolt = <1500000>;
@@ -971,6 +807,8 @@
 			sample_res = <10>;
 			virtual_power = <0>;
 			power_dc2otg = <0>;
+			bat-low-threshold = <30>;
+			bat_low_gpio = <&gpio0 RK_PC1 GPIO_ACTIVE_HIGH>;
 		};
 
 		charger {
@@ -984,7 +822,6 @@
 			virtual_power = <0>;
 			sample_res = <10>;
 			dc_det_gpio  = <&gpio3 RK_PA5 GPIO_ACTIVE_HIGH>;
-			bat_low_gpio = <&gpio0 RK_PC1 GPIO_ACTIVE_HIGH>;
 
 			extcon = <&u2phy>;
 		};
@@ -1026,7 +863,6 @@
 &io_domains {
 	/* GRF Register Voltage select control */
 	status = "okay";
-
 	/* SDIO I/O Voltage */
 	vccio1-supply = <&vcc_backlight>;
 	/* SDMMC I/O Voltage */
@@ -1046,7 +882,15 @@
 };
 
 &mipi_dphy_rx0 {
-	status = "okay";
+	status = "disabled";
+};
+
+&rkisp1 {
+	status = "disabled";
+};
+
+&spi0 {
+	status = "disabled";
 };
 
 &pmu_io_domains {
@@ -1054,9 +898,9 @@
 	status = "okay";
 
 	/* PMU I/O Voltage */
-	pmuio1-supply = <&vcc3v3_pmu>;
+	pmuio1-supply = <&vcc3v0_pmu>;
 	/* GPIO0_B/GPIO0_C, Flash */
-	pmuio2-supply = <&vcc3v3_pmu>;
+	pmuio2-supply = <&vcc3v0_pmu>;
 };
 
 /* RG351MP Motor PWM */
@@ -1069,16 +913,6 @@
 	status = "okay";
 };
 
-&route_dsi {
-	connect = <&vopb_out_dsi>;
-
-	status = "okay";
-};
-
-&rkisp1 {
-	status = "okay";
-};
-
 &rk_rga {
 	status = "okay";
 };
@@ -1086,14 +920,6 @@
 &rockchip_suspend {
 	status = "okay";
 	rockchip,sleep-debug-en = <1>;
-};
-
-&sfc {
-	status = "disabled";
-};
-
-&spi0 {
-	status = "disabled";
 };
 
 &saradc {
@@ -1130,8 +956,8 @@
 	sd-uhs-sdr25;
 	sd-uhs-sdr50;
 	sd-uhs-sdr104;
-	vqmmc-supply = <&vccio_sd>;
-	vmmc-supply = <&vcc_sd>;
+	vqmmc-supply = <&vcc_backlight>;
+	vmmc-supply = <&vcc_lcd>;
 	status = "okay";
 };
 
@@ -1139,6 +965,7 @@
 	pinctrl-names = "gpio", "otpout";
 	pinctrl-0 = <&tsadc_otp_gpio>;
 	pinctrl-1 = <&tsadc_otp_out>;
+	pinctrl-2 = <&tsadc_otp_gpio>;
 	status = "okay";
 };
 
@@ -1161,7 +988,7 @@
 &uart1 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&uart1_xfer &uart1_cts>;
-	status = "disabled";
+	status = "okay";
 };
 
 &uart0 {
@@ -1182,11 +1009,11 @@
 
 &uart5 {
 	clock-frequency = <115200>;
-	status = "okay";
+	status = "disabled";
 };
 
 &vip_mmu {
-	status = "okay";
+	status = "disabled";
 };
 
 &vopb {
@@ -1203,43 +1030,43 @@
 
 &pinctrl {
 
-	pcfg_pull_up_8_6ma: pcfg-pull-up-8-6ma  {
-		bias-pull-up;
-		drive-strength = <8>;
-		drive-strength-s = <6>;
-	};
+	// pcfg_pull_up_8_6ma: pcfg-pull-up-8-6ma  {
+	// 	bias-pull-up;
+	// 	drive-strength = <8>;
+	// 	drive-strength-s = <6>;
+	// };
 
-	pcfg_pull_none_8_6ma: pcfg-pull-none-8-6ma {
-		bias-disable;
-		drive-strength = <8>;
-		drive-strength-s = <6>;
-	};
+	// pcfg_pull_none_8_6ma: pcfg-pull-none-8-6ma {
+	// 	bias-disable;
+	// 	drive-strength = <8>;
+	// 	drive-strength-s = <6>;
+	// };
 
-	emmc {
-        emmc_clk: emmc-clk {
-            rockchip,pins = <1 RK_PB1 RK_FUNC_2 &pcfg_pull_none_8_6ma>;
-        };
-        emmc_cmd: emmc-cmd {
-            rockchip,pins = <1 RK_PB2 RK_FUNC_2 &pcfg_pull_up_8_6ma>;
-        };
-        emmc_bus8: emmc-bus8 {
-            rockchip,pins = 
-			<1 RK_PA0 RK_FUNC_2 &pcfg_pull_up_8_6ma>,
-			<1 RK_PA1 RK_FUNC_2 &pcfg_pull_up_8_6ma>,
-			<1 RK_PA2 RK_FUNC_2 &pcfg_pull_up_8_6ma>,
-			<1 RK_PA3 RK_FUNC_2 &pcfg_pull_up_8_6ma>,
-			<1 RK_PA4 RK_FUNC_2 &pcfg_pull_up_8_6ma>,
-			<1 RK_PA5 RK_FUNC_2 &pcfg_pull_up_8_6ma>,
-			<1 RK_PA6 RK_FUNC_2 &pcfg_pull_up_8_6ma>,
-			<1 RK_PA7 RK_FUNC_2 &pcfg_pull_up_8_6ma>;
-        };
-        emmc_pwren: emmc-pwren {
-            rockchip,pins = <1 RK_PB0 RK_FUNC_2 &pcfg_pull_none>;
-        };
-        emmc_rstnout: emmc-rstnout {
-            rockchip,pins = <1 RK_PB3 RK_FUNC_2 &pcfg_pull_none>;
-        };
-    };
+	// emmc {
+    //     emmc_clk: emmc-clk {
+    //         rockchip,pins = <1 RK_PB1 RK_FUNC_2 &pcfg_pull_none_8_6ma>;
+    //     };
+    //     emmc_cmd: emmc-cmd {
+    //         rockchip,pins = <1 RK_PB2 RK_FUNC_2 &pcfg_pull_up_8_6ma>;
+    //     };
+    //     emmc_bus8: emmc-bus8 {
+    //         rockchip,pins = 
+	// 		<1 RK_PA0 RK_FUNC_2 &pcfg_pull_up_8_6ma>,
+	// 		<1 RK_PA1 RK_FUNC_2 &pcfg_pull_up_8_6ma>,
+	// 		<1 RK_PA2 RK_FUNC_2 &pcfg_pull_up_8_6ma>,
+	// 		<1 RK_PA3 RK_FUNC_2 &pcfg_pull_up_8_6ma>,
+	// 		<1 RK_PA4 RK_FUNC_2 &pcfg_pull_up_8_6ma>,
+	// 		<1 RK_PA5 RK_FUNC_2 &pcfg_pull_up_8_6ma>,
+	// 		<1 RK_PA6 RK_FUNC_2 &pcfg_pull_up_8_6ma>,
+	// 		<1 RK_PA7 RK_FUNC_2 &pcfg_pull_up_8_6ma>;
+    //     };
+    //     emmc_pwren: emmc-pwren {
+    //         rockchip,pins = <1 RK_PB0 RK_FUNC_2 &pcfg_pull_none>;
+    //     };
+    //     emmc_rstnout: emmc-rstnout {
+    //         rockchip,pins = <1 RK_PB3 RK_FUNC_2 &pcfg_pull_none>;
+    //     };
+    // };
 
 	pmic {
 		pmic_int: pmic_int {
