@@ -14,7 +14,7 @@
 
 / {
     model = "GameConsole T16Max";
-    compatible = "xifan,r36Max", "rockchip,rk3326";
+    compatible = "xifan,t16Max", "rockchip,rk3326";
      
     aliases {
         mmc2 = &sdio;

@@ -2,7 +2,7 @@
 /*
 * Copyright (c) 2025 kk&lcdyk
 *
-* 稀范科技 R36Pro
+* R36S Clone掌机 种类2
 *
 */
 
@@ -16,8 +16,8 @@
 #include "rk3326-linux.dtsi"
 
 / {
-	model = "XiFan R36Pro";
-	compatible = "rockchip,rk3326-r36pro-linux", "rockchip,rk3326";
+	model = "GameConsole Clone Type2";
+	compatible = "rockchip,rk3326-r36s-type2-linux", "rockchip,rk3326";
 	
 	chosen {
 		bootargs = "";
@@ -49,6 +49,7 @@
 		};
 	};
 	
+	
 	joypad: odroidgo3-joypad {
 		compatible = "odroidgo3-joypad";
 		pwms = <&pwm0 0 200000000 0>;
@@ -75,7 +76,7 @@
 		amux-a-gpios = <&gpio2 RK_PC0 GPIO_ACTIVE_LOW>;
 		amux-b-gpios = <&gpio2 RK_PB7 GPIO_ACTIVE_LOW>;
 		/* adc mux enable gpio */
-		amux-en-gpios = <&gpio2 RK_PB4 GPIO_ACTIVE_LOW>;
+		amux-en-gpios = <&gpio2 RK_PB3 GPIO_ACTIVE_LOW>;
 		/* adc calculate scale */
 		button-adc-scale = <2>;
 		/* adc deadzone range  */
@@ -264,20 +265,6 @@
 	//         gpios = <&gpio0 RK_PC1 GPIO_ACTIVE_HIGH>;
 	//         default-state = "off";
 	//     };
-	
-	//     /* 工作蓝灯：GPIO0_B3 (GPIO0_11) */
-	//     blue_work: blue-work {
-	//         label = "blue:work";
-	//         gpios = <&gpio0 RK_PB3 GPIO_ACTIVE_HIGH>;
-	//         default-state = "off";
-	//     };
-	
-	//     /* 工作红灯：GPIO0_B4 (GPIO0_12) */
-	//     red_work: red-work {
-	//         label = "red:work";
-	//         gpios = <&gpio0 RK_PB4 GPIO_ACTIVE_HIGH>;
-	//         default-state = "off";
-	//     };
 	// };
 	rk817-sound {
 		compatible = "simple-audio-card";
@@ -317,7 +304,7 @@
 		regulator-name = "vcc18_lcd0_n";
 		regulator-min-microvolt = <1800000>;
 		regulator-max-microvolt = <1800000>;
-		gpio = <&gpio0 RK_PB5 GPIO_ACTIVE_HIGH>;
+		gpio = <&gpio3 RK_PA3 GPIO_ACTIVE_HIGH>;
 		pinctrl-0 = <&vcc18_lcd_n>;
 		pinctrl-names = "default";
 		enable-active-high;
@@ -381,10 +368,10 @@
 		// backlight-supply = <&vcc_backlight>;
 		/* RK817 LDO8 */
 		power-supply = <&vcc18_lcd0>;
-		/* LCD reset gpio GPIO3.B7 */
-		reset-gpios = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
-		/* power-supply-gpio GPIO0.B5  */
-		// enable-gpios = <&gpio0 RK_PB5 GPIO_ACTIVE_HIGH>;
+		/* LCD reset gpio GPIO3.D3 */
+		reset-gpios = <&gpio3 RK_PD3 GPIO_ACTIVE_LOW>;
+		/* power-supply-gpio GPIO3.A3  */
+		// enable-gpios = <&gpio3 RK_PA3 GPIO_ACTIVE_HIGH>;
 		prepare-delay-ms = <20>;
 		reset-delay-ms = <20>;
 		init-delay-ms = <20>;
@@ -444,11 +431,6 @@
 	status = "okay";
 };
 
-&route_dsi {
-	connect = <&vopb_out_dsi>;
-	status = "okay";
-};
-
 &dfi {
 	status = "okay";
 };
@@ -499,10 +481,6 @@
 	fifo-depth = <256>;
 	max-frequency = <150000000>;
 	num-slots = <1>;
-};
-
-&sfc {
-	status = "disabled";
 };
 
 &gpu {
@@ -881,14 +859,6 @@
 	status = "disabled";
 };
 
-&rkisp1 {
-	status = "disabled";
-};
-
-&spi0 {
-	status = "disabled";
-};
-
 &pmu_io_domains {
 	/* PMU GRF Register Voltage select control */
 	status = "okay";
@@ -909,6 +879,15 @@
 	status = "okay";
 };
 
+&route_dsi {
+	connect = <&vopb_out_dsi>;
+	status = "okay";
+};
+
+&rkisp1 {
+	status = "disabled";
+};
+
 &rk_rga {
 	status = "okay";
 };
@@ -916,6 +895,14 @@
 &rockchip_suspend {
 	status = "okay";
 	rockchip,sleep-debug-en = <1>;
+};
+
+&sfc {
+	status = "disabled";
+};
+
+&spi0 {
+	status = "disabled";
 };
 
 &saradc {
@@ -1087,7 +1074,7 @@
 	};
 	vcc18-lcd {
 		vcc18_lcd_n: vcc18-lcd-n {
-			rockchip,pins = <0 RK_PB5 RK_FUNC_GPIO &pcfg_pull_none>;
+			rockchip,pins = <3 RK_PA3 RK_FUNC_GPIO &pcfg_pull_none>;
 		};
 	};
 	
@@ -1101,9 +1088,7 @@
 	// 	led_pins: led-pins {
 	// 		rockchip,pins =
 	// 			<0 RK_PA0 RK_FUNC_GPIO &pcfg_pull_none>, /* charge blue  */
-	// 			<0 RK_PC1 RK_FUNC_GPIO &pcfg_pull_none>, /* charge red   */
-	// 			<0 RK_PB3 RK_FUNC_GPIO &pcfg_pull_none>, /* work blue    */
-	// 			<0 RK_PB4 RK_FUNC_GPIO &pcfg_pull_none>; /* work red     */
+	// 			<0 RK_PC1 RK_FUNC_GPIO &pcfg_pull_none>; /* charge red   */
 	// 	};
 	// };
 	btns {
@@ -1123,11 +1108,10 @@
 			<3 RK_PC7 RK_FUNC_GPIO &pcfg_pull_up>,
 			<3 RK_PD0 RK_FUNC_GPIO &pcfg_pull_up>,
 			<3 RK_PD1 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PD2 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PD3 RK_FUNC_GPIO &pcfg_pull_up>,
+			<3 RK_PB2 RK_FUNC_GPIO &pcfg_pull_up>,
+			<3 RK_PB7 RK_FUNC_GPIO &pcfg_pull_up>,
 			<2 RK_PB5 RK_FUNC_GPIO &pcfg_pull_up>,
-			<2 RK_PB6 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PB2 RK_FUNC_GPIO &pcfg_pull_up>;
+			<2 RK_PB6 RK_FUNC_GPIO &pcfg_pull_up>;
 		};
 	};
 	headphone {
