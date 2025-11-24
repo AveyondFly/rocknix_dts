@@ -124,20 +124,7 @@
         io-channels = <&saradc 1>;
 
         /* adc mux channel count */
-        amux-count = <4>;
-        /* non-default wiring */
-        amux-channel-mapping = <2 3 1 0>;
-        /* adc mux enable gpio */
-        amux-en-gpios = <&gpio2 RK_PB4 GPIO_ACTIVE_LOW>;   /* rocker0-gpios */
-        /* adc mux select(a,b) gpio */
-        amux-a-gpios = <&gpio2 RK_PC0 GPIO_ACTIVE_LOW>;     /* rocker1-gpios */
-        amux-b-gpios = <&gpio2 RK_PB7 GPIO_ACTIVE_LOW>;     /* rocker-gpios */
-
-        /* adc calculate scale */
-        button-adc-scale = <2>;
-
-        /* adc deadzone range  */
-        button-adc-deadzone = <64>;
+        amux-count = <0>;
 
         /*
            specifies fuzz value that is used to filter noise from
@@ -146,23 +133,6 @@
         button-adc-fuzz = <32>;
         button-adc-flat = <32>;
 
-        /*
-           Analog Stick data tuning value(precent)
-           p = positive direction, n = negative direction
-           report value = (real_adc_data * tuning_value) / 100
-         */
-        abs_x-p-tuning = <200>;
-        abs_x-n-tuning = <200>;
-
-        abs_y-p-tuning = <200>;
-        abs_y-n-tuning = <200>;
-
-        abs_rx-p-tuning = <200>;
-        abs_rx-n-tuning = <200>;
-
-        abs_ry-p-tuning = <200>;
-        abs_ry-n-tuning = <200>;
-
         /* poll device interval (ms), adc read interval */
         poll-interval = <10>;
 
@@ -170,8 +140,6 @@
         /*
            autorepeat;
          */
-         invert-absx;
-         invert-absy;
 
         /*
             joypad driver is poll-device driver.
