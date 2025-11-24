@@ -13,8 +13,8 @@
 #include "rk3326.dtsi"
 
 / {
-    model = "GameMT E6";
-    compatible = "gmmt,e6", "rockchip,rk3326";
+    model = "Diium D007";
+    compatible = "diium,d007", "rockchip,rk3326";
      
     aliases {
         mmc0 = &sdmmc;
