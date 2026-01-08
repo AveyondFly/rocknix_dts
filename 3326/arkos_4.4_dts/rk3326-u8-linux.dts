@@ -2,7 +2,7 @@
 /*
 * Copyright (c) 2025 kk&lcdyk
 *
-* 稀范科技 XF35H
+* U8
 *
 */
 
@@ -16,8 +16,8 @@
 #include "rk3326-linux.dtsi"
 
 / {
-	model = "XiFan XF35H";
-	compatible = "rockchip,rk3326-xf35h-linux", "rockchip,rk3326";
+	model = "U8";
+	compatible = "rockchip,rk3326-u8-linux", "rockchip,rk3326";
 	
 	chosen {
 		bootargs = "";
@@ -46,6 +46,10 @@
 	
 	joypad: odroidgo3-joypad {
 		compatible = "odroidgo3-joypad";
+		pwms = <&pwm0 0 200000000 0>;
+		pwm-names = "enable";
+		rumble-boost-weak = <0x0000>;
+		rumble-boost-strong = <0x0000>;
 		joypad-name = "GO-Super Gamepad";
 		joypad-product = <0x1100>;
 		joypad-revision = <0x0100>;
@@ -54,6 +58,7 @@
 		/* gpio pincontrol setup */
 		pinctrl-names = "default";
 		pinctrl-0 = <&btn_pins>;
+		pinctrl-1 = <&pwm0_pin>;
 		/* Analog mux define */
 		io-channel-names = "amux_adc";
 		io-channels = <&saradc 1>;
@@ -65,8 +70,7 @@
 		amux-a-gpios = <&gpio2 RK_PC0 GPIO_ACTIVE_LOW>;
 		amux-b-gpios = <&gpio2 RK_PB7 GPIO_ACTIVE_LOW>;
 		/* adc mux enable gpio */
-		// amux-en-gpios = <&gpio2 RK_PB4 GPIO_ACTIVE_LOW>;
-		rumble-gpio = <&gpio3 RK_PA6 GPIO_ACTIVE_HIGH>;
+		amux-en-gpios = <&gpio2 RK_PB4 GPIO_ACTIVE_LOW>;
 		/* adc calculate scale */
 		button-adc-scale = <2>;
 		/* adc deadzone range  */
@@ -98,6 +102,8 @@
 		poll-interval = <10>;
 		invert-absx;
 		invert-absy;
+		invert-absrx;
+		invert-absry;
 		sw1 {
 			gpios = <&gpio3 RK_PC6 GPIO_ACTIVE_LOW>;
 			label = "GPIO DPAD-UP";
@@ -305,14 +311,6 @@
 		regulator-max-microvolt = <3800000>;
 	};
 	
-	wireless_wlan: wireless-wlan {
-		compatible = "wlan-platdata";
-		wifi_chip_type = "rk915";
-		WIFI,host_wake_irq = <&gpio0 RK_PA5 GPIO_ACTIVE_HIGH>;
-		WIFI,poweren_gpio = <&gpio0 RK_PA2 GPIO_ACTIVE_HIGH>;
-		status = "okay";
-	};
-	
 	vcc_host: vcc_host {
 		compatible = "regulator-fixed";
 		regulator-name = "vcc_host";
@@ -369,7 +367,7 @@
 		power-supply = <&vcc_lcd>;
 		/* LCD reset gpio GPIO3.B7 */
 		reset-gpios = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
-		/* power-supply-gpio GPIO0.B5  */
+		/* LCD reset gpio GPIO0.B5 */
 		enable-gpios = <&gpio0 RK_PB5 GPIO_ACTIVE_HIGH>;
 		prepare-delay-ms = <20>;
 		reset-delay-ms = <20>;
@@ -384,8 +382,8 @@
 		MIPI_DSI_MODE_LPM |
 		MIPI_DSI_MODE_EOT_PACKET)>;
 		dsi,format = <MIPI_DSI_FMT_RGB888>;
-		dsi,lanes = <4>;
-		panel-init-sequence = [39 00 04 b9 f1 12 83 39 00 06 b1 00 00 00 da 80 39 00 04 b2 00 13 70 39 00 0b b3 10 10 28 28 03 ff 00 00 00 00 15 00 02 b4 80 15 00 03 b5 0a 0a 15 00 03 b6 82 82 39 00 05 b8 26 62 f0 63 39 00 1c ba 33 81 05 f9 0e 0e 20 00 00 00 00 00 00 00 44 25 00 90 0a 00 00 01 4f 01 00 00 37 15 00 02 bc 47 39 00 04 bf 02 11 00 39 00 0a c0 73 73 50 50 00 00 12 50 00 39 00 0d c1 53 00 32 32 77 d1 cc cc 77 77 33 33 39 00 07 c6 82 00 bf ff 00 ff 39 00 07 c7 b8 00 0a 00 00 00 39 00 05 c8 10 40 1e 02 15 00 02 cc 0b 39 00 23 e0 00 07 0d 37 35 3f 41 44 06 0c 0d 0f 11 10 12 14 1a 00 07 0d 37 35 3f 41 44 06 0c 0d 0f 11 10 12 14 1a 39 00 0f e3 07 07 0b 0b 0b 0b 00 00 00 00 ff 00 c0 10 39 00 40 e9 c8 10 02 00 00 b0 b1 11 31 23 28 80 b0 b1 27 08 00 04 02 00 00 00 00 04 02 00 00 00 88 88 ba 60 24 08 88 88 88 88 88 88 88 ba 71 35 18 88 88 88 88 88 00 00 00 01 00 00 00 00 00 00 00 00 00 39 00 3e ea 97 0a 82 02 03 07 00 00 00 00 00 00 81 88 ba 17 53 88 88 88 88 88 88 80 88 ba 06 42 88 88 88 88 88 88 23 00 00 02 80 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 39 00 04 ef ff ff 01 05 c8 01 11 05 14 01 29];
+		dsi,lanes = <2>;
+		panel-init-sequence = [39 00 06 ff ff 98 06 04 01 15 00 02 08 10 15 00 02 21 01 15 00 02 22 03 15 00 02 30 02 15 00 02 31 00 15 00 02 60 07 15 00 02 61 00 15 00 02 62 08 15 00 02 63 00 15 00 02 40 15 15 00 02 41 66 15 00 02 42 13 15 00 02 43 08 15 00 02 44 05 15 00 02 50 70 15 00 02 51 70 15 00 02 52 00 15 00 02 53 64 15 00 02 57 50 15 00 02 a0 0b 15 00 02 a1 11 15 00 02 a2 16 15 00 02 a3 0b 15 00 02 a4 03 15 00 02 a5 07 15 00 02 a6 06 15 00 02 a7 04 15 00 02 a8 09 15 00 02 a9 0c 15 00 02 aa 11 15 00 02 ab 07 15 00 02 ac 0d 15 00 02 ad 1a 15 00 02 ae 13 15 00 02 af 08 15 00 02 c0 0b 15 00 02 c1 11 15 00 02 c2 16 15 00 02 c3 0b 15 00 02 c4 03 15 00 02 c5 07 15 00 02 c6 06 15 00 02 c7 04 15 00 02 c8 09 15 00 02 c9 0c 15 00 02 ca 11 15 00 02 cb 07 15 00 02 cc 0d 15 00 02 cd 1a 15 00 02 ce 13 15 00 02 cf 00 39 00 06 ff ff 98 06 04 06 15 00 02 00 21 15 00 02 01 0a 15 00 02 02 00 15 00 02 03 00 15 00 02 04 05 15 00 02 05 05 15 00 02 06 80 15 00 02 07 06 15 00 02 08 01 15 00 02 09 00 15 00 02 0a 00 15 00 02 0b 00 15 00 02 0c 06 15 00 02 0d 06 15 00 02 0e 00 15 00 02 0f 00 15 00 02 10 f0 15 00 02 11 f4 15 00 02 12 03 15 00 02 13 00 15 00 02 14 00 15 00 02 15 c0 15 00 02 16 08 15 00 02 17 00 15 00 02 18 00 15 00 02 19 00 15 00 02 1a 00 15 00 02 1b 00 15 00 02 1c 00 15 00 02 1d 00 15 00 02 20 01 15 00 02 21 23 15 00 02 22 45 15 00 02 23 67 15 00 02 24 01 15 00 02 25 23 15 00 02 26 45 15 00 02 27 67 15 00 02 30 01 15 00 02 31 11 15 00 02 32 00 15 00 02 33 ee 15 00 02 34 ff 15 00 02 35 cb 15 00 02 36 da 15 00 02 37 ad 15 00 02 38 bc 15 00 02 39 76 15 00 02 3a 67 15 00 02 3b 22 15 00 02 3c 22 15 00 02 3d 22 15 00 02 3e 22 15 00 02 3f 22 15 00 02 40 22 15 00 02 52 10 15 00 02 53 10 15 00 02 54 13 39 00 06 ff ff 98 06 04 07 15 00 02 17 22 15 00 02 02 77 15 00 02 e1 79 15 00 02 b3 10 15 00 02 26 b2 39 00 06 ff ff 98 06 04 00 05 78 01 11 05 0a 01 29];
 		panel-exit-sequence = <0x5000128 0x5000110>;
 		
 		display-timings {
@@ -393,28 +391,28 @@
 			
 			timing0: adjust {
 				clock-frequency = <30000000>;
-				hactive        = <640>;
-				vactive        = <480>;
-				hfront-porch   = <150>;
-				hsync-len      = <40>;
-				hback-porch    = <135>;
-				vfront-porch   = <20>;
-				vsync-len      = <6>;
-				vback-porch    = <12>;
-				hsync-active    = <0>;
-				vsync-active    = <0>;
-				de-active       = <0>;
+				hactive = <480>;
+				vactive = <800>;
+				hfront-porch = <32>;
+				hsync-len = <6>;
+				hback-porch = <32>;
+				vfront-porch = <10>;
+				vsync-len = <4>;
+				vback-porch = <95>;
+				hsync-active = <0>;
+				vsync-active = <0>;
+				de-active = <0>;
 				pixelclk-active = <0>;
 			};
 			timing1: origin {
 				clock-frequency = <30000000>;
-				hactive = <640>;
-				vactive = <480>;
-				hfront-porch = <150>;
-				hsync-len = <50>;
-				hback-porch = <150>;
-				vfront-porch = <20>;
-				vsync-len = <6>;
+				hactive = <480>;
+				vactive = <800>;
+				hfront-porch = <32>;
+				hsync-len = <6>;
+				hback-porch = <32>;
+				vfront-porch = <10>;
+				vsync-len = <4>;
 				vback-porch = <12>;
 				hsync-active = <0>;
 				vsync-active = <0>;
@@ -727,9 +725,9 @@
 			3570 3610 3650 3690 3720 3750 3790
 			3830 3870 3910 3940 3967 4001 4046
 			>;
-			design_capacity = <3228>;
-			design_qmax = <3550>;
-			bat_res = <115>;
+			design_capacity = <2832>;
+			design_qmax = <3115>;
+			bat_res = <150>;
 			sleep_enter_current = <300>;
 			sleep_exit_current = <300>;
 			sleep_filter_current = <100>;
@@ -747,11 +745,11 @@
 		charger {
 			compatible = "rk817,charger";
 			min_input_voltage = <4500>;
-			max_input_current = <800>;
-			max_chrg_current = <800>;
+			max_input_current = <1500>;
+			max_chrg_current = <2000>;
 			max_chrg_voltage = <4200>;
 			chrg_term_mode = <0>;
-			chrg_finish_cur = <300>;
+			chrg_finish_cur = <52>;
 			virtual_power = <0>;
 			sample_res = <10>;
 			dc_det_gpio  = <&gpio3 RK_PA5 GPIO_ACTIVE_HIGH>;
@@ -889,16 +887,20 @@
 
 &sdio {
 	bus-width = <4>;
+	cap-mmc-highspeed;
 	cap-sd-highspeed;
-	supports-rk912;
-	supports-sdio;
-	pinctrl-0 = <&sdio_bus4 &sdio_cmd &sdio_clk>;
-	no-sd;
-	no-mmc;
+	supports-sd;
+	max-frequency = <100000000>;
+	card-detect-delay = <800>;
 	ignore-pm-notify;
-	keep-power-in-suspend;
+	cd-gpios = <&gpio0 RK_PA2 GPIO_ACTIVE_LOW>;
+	sd-uhs-sdr12;
+	sd-uhs-sdr25;
+	sd-uhs-sdr50;
+	sd-uhs-sdr104;
+	vqmmc-supply = <&vcc_backlight>;
+	vmmc-supply = <&vcc_lcd>;
 	status = "okay";
-	pinctrl-names = "default";
 };
 
 &tsadc {
@@ -936,13 +938,7 @@
 };
 
 &uart2 {
-	status = "okay";
-	dma-names = "tx";
-	pinctrl-0 = <&uart2m1_xfer>;
-};
-
-&uart2m1_xfer {
-	rockchip,pins = <2 RK_PB4 2 &pcfg_pull_up>;
+	status = "disabled";
 };
 
 &uart3 {
@@ -997,35 +993,9 @@
 		};
 	};
 	
-	sdio {
-		
-		sdio_clk: sdio-clk {
-			rockchip,pins = <1 RK_PC5 RK_FUNC_1 &pcfg_pull_none>;
-		};
-		
-		sdio_cmd: sdio-cmd {
-			rockchip,pins = <1 RK_PC4 RK_FUNC_1 &pcfg_pull_up>;
-		};
-		
-		sdio_bus4: sdio-bus4 {
-			rockchip,pins =
-			<1 RK_PC6 RK_FUNC_1 &pcfg_pull_up>,
-			<1 RK_PC7 RK_FUNC_1 &pcfg_pull_up>,
-			<1 RK_PD0 RK_FUNC_1 &pcfg_pull_up>,
-			<1 RK_PD1 RK_FUNC_1 &pcfg_pull_up>;
-		};
-	};
-	
 	vcc5-usb {
 		vcc5_usb: vcc5-usb {
 			rockchip,pins = <3 RK_PA4 RK_FUNC_GPIO &pcfg_pull_none>;
-		};
-	};
-	
-	sdio-pwrseq {
-		
-		wifi_enable_h: wifi-enable-h {
-			rockchip,pins = <0 RK_PA2 RK_FUNC_GPIO &pcfg_output_high>;
 		};
 	};
 	

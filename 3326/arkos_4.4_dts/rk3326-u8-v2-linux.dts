@@ -2,7 +2,7 @@
 /*
 * Copyright (c) 2025 kk&lcdyk
 *
-* 稀范科技 XF35H
+* U8
 *
 */
 
@@ -16,8 +16,8 @@
 #include "rk3326-linux.dtsi"
 
 / {
-	model = "XiFan XF35H";
-	compatible = "rockchip,rk3326-xf35h-linux", "rockchip,rk3326";
+	model = "U8";
+	compatible = "rockchip,rk3326-u8-linux", "rockchip,rk3326";
 	
 	chosen {
 		bootargs = "";
@@ -46,6 +46,10 @@
 	
 	joypad: odroidgo3-joypad {
 		compatible = "odroidgo3-joypad";
+		pwms = <&pwm0 0 200000000 0>;
+		pwm-names = "enable";
+		rumble-boost-weak = <0x0000>;
+		rumble-boost-strong = <0x0000>;
 		joypad-name = "GO-Super Gamepad";
 		joypad-product = <0x1100>;
 		joypad-revision = <0x0100>;
@@ -54,6 +58,7 @@
 		/* gpio pincontrol setup */
 		pinctrl-names = "default";
 		pinctrl-0 = <&btn_pins>;
+		pinctrl-1 = <&pwm0_pin>;
 		/* Analog mux define */
 		io-channel-names = "amux_adc";
 		io-channels = <&saradc 1>;
@@ -65,8 +70,7 @@
 		amux-a-gpios = <&gpio2 RK_PC0 GPIO_ACTIVE_LOW>;
 		amux-b-gpios = <&gpio2 RK_PB7 GPIO_ACTIVE_LOW>;
 		/* adc mux enable gpio */
-		// amux-en-gpios = <&gpio2 RK_PB4 GPIO_ACTIVE_LOW>;
-		rumble-gpio = <&gpio3 RK_PA6 GPIO_ACTIVE_HIGH>;
+		amux-en-gpios = <&gpio2 RK_PB4 GPIO_ACTIVE_LOW>;
 		/* adc calculate scale */
 		button-adc-scale = <2>;
 		/* adc deadzone range  */
@@ -98,6 +102,8 @@
 		poll-interval = <10>;
 		invert-absx;
 		invert-absy;
+		invert-absrx;
+		invert-absry;
 		sw1 {
 			gpios = <&gpio3 RK_PC6 GPIO_ACTIVE_LOW>;
 			label = "GPIO DPAD-UP";
@@ -305,14 +311,6 @@
 		regulator-max-microvolt = <3800000>;
 	};
 	
-	wireless_wlan: wireless-wlan {
-		compatible = "wlan-platdata";
-		wifi_chip_type = "rk915";
-		WIFI,host_wake_irq = <&gpio0 RK_PA5 GPIO_ACTIVE_HIGH>;
-		WIFI,poweren_gpio = <&gpio0 RK_PA2 GPIO_ACTIVE_HIGH>;
-		status = "okay";
-	};
-	
 	vcc_host: vcc_host {
 		compatible = "regulator-fixed";
 		regulator-name = "vcc_host";
@@ -369,7 +367,7 @@
 		power-supply = <&vcc_lcd>;
 		/* LCD reset gpio GPIO3.B7 */
 		reset-gpios = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
-		/* power-supply-gpio GPIO0.B5  */
+		/* LCD reset gpio GPIO0.B5 */
 		enable-gpios = <&gpio0 RK_PB5 GPIO_ACTIVE_HIGH>;
 		prepare-delay-ms = <20>;
 		reset-delay-ms = <20>;
@@ -384,8 +382,8 @@
 		MIPI_DSI_MODE_LPM |
 		MIPI_DSI_MODE_EOT_PACKET)>;
 		dsi,format = <MIPI_DSI_FMT_RGB888>;
-		dsi,lanes = <4>;
-		panel-init-sequence = [39 00 04 b9 f1 12 83 39 00 06 b1 00 00 00 da 80 39 00 04 b2 00 13 70 39 00 0b b3 10 10 28 28 03 ff 00 00 00 00 15 00 02 b4 80 15 00 03 b5 0a 0a 15 00 03 b6 82 82 39 00 05 b8 26 62 f0 63 39 00 1c ba 33 81 05 f9 0e 0e 20 00 00 00 00 00 00 00 44 25 00 90 0a 00 00 01 4f 01 00 00 37 15 00 02 bc 47 39 00 04 bf 02 11 00 39 00 0a c0 73 73 50 50 00 00 12 50 00 39 00 0d c1 53 00 32 32 77 d1 cc cc 77 77 33 33 39 00 07 c6 82 00 bf ff 00 ff 39 00 07 c7 b8 00 0a 00 00 00 39 00 05 c8 10 40 1e 02 15 00 02 cc 0b 39 00 23 e0 00 07 0d 37 35 3f 41 44 06 0c 0d 0f 11 10 12 14 1a 00 07 0d 37 35 3f 41 44 06 0c 0d 0f 11 10 12 14 1a 39 00 0f e3 07 07 0b 0b 0b 0b 00 00 00 00 ff 00 c0 10 39 00 40 e9 c8 10 02 00 00 b0 b1 11 31 23 28 80 b0 b1 27 08 00 04 02 00 00 00 00 04 02 00 00 00 88 88 ba 60 24 08 88 88 88 88 88 88 88 ba 71 35 18 88 88 88 88 88 00 00 00 01 00 00 00 00 00 00 00 00 00 39 00 3e ea 97 0a 82 02 03 07 00 00 00 00 00 00 81 88 ba 17 53 88 88 88 88 88 88 80 88 ba 06 42 88 88 88 88 88 88 23 00 00 02 80 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 39 00 04 ef ff ff 01 05 c8 01 11 05 14 01 29];
+		dsi,lanes = <2>;
+		panel-init-sequence = <0x390006ff 0xff980604 0x1150002 0x8101500 0x2210115 0x22203 0x15000230 0x2150002 0x31021500 0x2600715 0x26106 0x15000262 0x6150002 0x63041500 0x2401515 0x24133 0x15000242 0x150002 0x430b1500 0x2440915 0x25070 0x15000251 0x70150002 0x52001500 0x2535215 0x2a000 0x150002a1 0xc150002 0xa2141500 0x2a30c15 0x2a405 0x150002a5 0xb150002 0xa6071500 0x2a70615 0x2a806 0x150002a9 0xa150002 0xaa0f1500 0x2ab0615 0x2ac0c 0x150002ad 0x17150002 0xae0d1500 0x2af0015 0x2c000 0x150002c1 0xc150002 0xc2141500 0x2c30c15 0x2c406 0x150002c5 0xb150002 0xc6071500 0x2c70615 0x2c806 0x150002c9 0xa150002 0xca0f1500 0x2cb0615 0x2cc0c 0x150002cd 0x17150002 0xce0d1500 0x2cf0039 0x6ffff 0x98060406 0x15000200 0x20150002 0x1051500 0x2020015 0x20300 0x15000204 0x1150002 0x5011500 0x2068815 0x20704 0x15000208 0x1150002 0x9901500 0x20a0415 0x20b01 0x1500020c 0x1150002 0xd011500 0x20e0015 0x20f00 0x15000210 0x55150002 0x11501500 0x2120115 0x2130c 0x15000214 0xd150002 0x15431500 0x2160b15 0x21700 0x15000218 0x150002 0x19001500 0x21a0015 0x21b00 0x1500021c 0x150002 0x1d001500 0x2200115 0x22123 0x15000222 0x45150002 0x23671500 0x2240115 0x22523 0x15000226 0x45150002 0x27671500 0x2300215 0x23122 0x15000232 0x11150002 0x33aa1500 0x234bb15 0x23566 0x15000236 0x150002 0x37221500 0x2382215 0x23922 0x1500023a 0x22150002 0x3b221500 0x23c2215 0x23d22 0x1500023e 0x22150002 0x3f221500 0x2402215 0x25210 0x15000253 0x10390006 0xffff9806 0x4071500 0x2001115 0x2181d 0x15000217 0x22150002 0x2771500 0x2e17939 0x6ffff 0x98060400 0x5780111 0x5140129>;
 		panel-exit-sequence = <0x5000128 0x5000110>;
 		
 		display-timings {
@@ -393,28 +391,28 @@
 			
 			timing0: adjust {
 				clock-frequency = <30000000>;
-				hactive        = <640>;
-				vactive        = <480>;
-				hfront-porch   = <150>;
-				hsync-len      = <40>;
-				hback-porch    = <135>;
-				vfront-porch   = <20>;
-				vsync-len      = <6>;
-				vback-porch    = <12>;
-				hsync-active    = <0>;
-				vsync-active    = <0>;
-				de-active       = <0>;
+				hactive = <480>;
+				vactive = <800>;
+				hfront-porch = <32>;
+				hsync-len = <6>;
+				hback-porch = <32>;
+				vfront-porch = <10>;
+				vsync-len = <4>;
+				vback-porch = <95>;
+				hsync-active = <0>;
+				vsync-active = <0>;
+				de-active = <0>;
 				pixelclk-active = <0>;
 			};
 			timing1: origin {
 				clock-frequency = <30000000>;
-				hactive = <640>;
-				vactive = <480>;
-				hfront-porch = <150>;
-				hsync-len = <50>;
-				hback-porch = <150>;
-				vfront-porch = <20>;
-				vsync-len = <6>;
+				hactive = <480>;
+				vactive = <800>;
+				hfront-porch = <32>;
+				hsync-len = <6>;
+				hback-porch = <32>;
+				vfront-porch = <10>;
+				vsync-len = <4>;
 				vback-porch = <12>;
 				hsync-active = <0>;
 				vsync-active = <0>;
@@ -727,9 +725,9 @@
 			3570 3610 3650 3690 3720 3750 3790
 			3830 3870 3910 3940 3967 4001 4046
 			>;
-			design_capacity = <3228>;
-			design_qmax = <3550>;
-			bat_res = <115>;
+			design_capacity = <2832>;
+			design_qmax = <3115>;
+			bat_res = <150>;
 			sleep_enter_current = <300>;
 			sleep_exit_current = <300>;
 			sleep_filter_current = <100>;
@@ -889,16 +887,20 @@
 
 &sdio {
 	bus-width = <4>;
+	cap-mmc-highspeed;
 	cap-sd-highspeed;
-	supports-rk912;
-	supports-sdio;
-	pinctrl-0 = <&sdio_bus4 &sdio_cmd &sdio_clk>;
-	no-sd;
-	no-mmc;
+	supports-sd;
+	max-frequency = <100000000>;
+	card-detect-delay = <800>;
 	ignore-pm-notify;
-	keep-power-in-suspend;
+	cd-gpios = <&gpio0 RK_PA2 GPIO_ACTIVE_LOW>;
+	sd-uhs-sdr12;
+	sd-uhs-sdr25;
+	sd-uhs-sdr50;
+	sd-uhs-sdr104;
+	vqmmc-supply = <&vcc_backlight>;
+	vmmc-supply = <&vcc_lcd>;
 	status = "okay";
-	pinctrl-names = "default";
 };
 
 &tsadc {
@@ -936,13 +938,7 @@
 };
 
 &uart2 {
-	status = "okay";
-	dma-names = "tx";
-	pinctrl-0 = <&uart2m1_xfer>;
-};
-
-&uart2m1_xfer {
-	rockchip,pins = <2 RK_PB4 2 &pcfg_pull_up>;
+	status = "disabled";
 };
 
 &uart3 {
@@ -997,35 +993,9 @@
 		};
 	};
 	
-	sdio {
-		
-		sdio_clk: sdio-clk {
-			rockchip,pins = <1 RK_PC5 RK_FUNC_1 &pcfg_pull_none>;
-		};
-		
-		sdio_cmd: sdio-cmd {
-			rockchip,pins = <1 RK_PC4 RK_FUNC_1 &pcfg_pull_up>;
-		};
-		
-		sdio_bus4: sdio-bus4 {
-			rockchip,pins =
-			<1 RK_PC6 RK_FUNC_1 &pcfg_pull_up>,
-			<1 RK_PC7 RK_FUNC_1 &pcfg_pull_up>,
-			<1 RK_PD0 RK_FUNC_1 &pcfg_pull_up>,
-			<1 RK_PD1 RK_FUNC_1 &pcfg_pull_up>;
-		};
-	};
-	
 	vcc5-usb {
 		vcc5_usb: vcc5-usb {
 			rockchip,pins = <3 RK_PA4 RK_FUNC_GPIO &pcfg_pull_none>;
-		};
-	};
-	
-	sdio-pwrseq {
-		
-		wifi_enable_h: wifi-enable-h {
-			rockchip,pins = <0 RK_PA2 RK_FUNC_GPIO &pcfg_output_high>;
 		};
 	};
 	
