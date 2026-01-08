@@ -23,11 +23,6 @@
 		bootargs = "";
 	};
 	
-	aliases {
-		mmc0 = &sdmmc;   /* ff370000：外置 microSD */
-		mmc1 = &sdio;   /* ff380000：SDIO Wi-Fi */
-	};
-	
 	gpio_keys: odroidgo3-keys {
 		compatible = "gpio-keys";
 		#address-cells = <1>;
@@ -230,18 +225,7 @@
 		136 137 138 139 140 141 142 143
 		144 145 146 147 148 149 150 151
 		152 153 154 155 156 157 158 159
-		160 161 162 163 164 165 166 167
-		168 169 170 171 172 173 174 175
-		176 177 178 179 180 181 182 183
-		184 185 186 187 188 189 190 191
-		192 193 194 195 196 197 198 199
-		200 201 202 203 204 205 206 207
-		208 209 210 211 212 213 214 215
-		216 217 218 219 220 221 222 223
-		224 225 226 227 228 229 230 231
-		232 233 234 235 236 237 238 239
-		240 241 242 243 244 245 246 247
-		248 249 250 251 252 253 254 255>;
+		160>;
 		default-brightness-level = <80>;
 	};
 	
@@ -274,6 +258,7 @@
 	// 		default-state = "off";
 	// 	};
 	// };
+	
 	rk817-sound {
 		compatible = "simple-audio-card";
 		simple-audio-card,format = "i2s";
@@ -340,7 +325,7 @@
 	status = "okay";
 	
 	panel@0 {
-		compatible = "elida,kd35t133", "simple-panel-dsi";
+		compatible = "simple-panel-dsi";
 		reg = <0>;
 		/* pwm1 backlight */
 		backlight = <&backlight>;
@@ -373,12 +358,12 @@
 				clock-frequency = <40000000>;
 				hactive = <640>;
 				vactive = <480>;
-				hfront-porch = <210>;
-				hsync-len = <210>;
-				hback-porch = <210>;
-				vfront-porch = <22>;
-				vsync-len = <6>;
-				vback-porch = <17>;
+				hback-porch = <218>;
+				hfront-porch = <218>;
+				vback-porch = <13>;
+				vfront-porch = <17>;
+				hsync-len = <218>;
+				vsync-len = <5>;
 				hsync-active = <0>;
 				vsync-active = <0>;
 				de-active = <0>;
@@ -417,7 +402,6 @@
 };
 
 &dmc {
-	operating-points-v2 = <&dmc_opp_table>;
 	center-supply = <&vdd_logic>;
 	status = "okay";
 };
@@ -427,9 +411,9 @@
 	/delete-node/ opp-328000000;
 	/delete-node/ opp-450000000;
 	
-	opp-786000000 {
-		status = "okay";
-	};
+	// opp-786000000 {
+	// 	status = "okay";
+	// };
 };
 
 &gpu_opp_table {
@@ -437,16 +421,11 @@
 	/delete-node/ opp-300000000;
 };
 
-&emmc {
-	status = "disabled";
-};
-
 &sfc {
 	status = "disabled";
 };
 
 &gpu {
-	operating-points-v2 = <&gpu_opp_table>;
 	mali-supply = <&vdd_logic>;
 	status = "okay";
 };
@@ -616,7 +595,7 @@
 				};
 			};
 			
-			vcc1v0_soc: LDO_REG3 {
+			vdd1v0_soc: LDO_REG3 {
 				regulator-always-on;
 				regulator-boot-on;
 				regulator-min-microvolt = <1000000>;
@@ -646,12 +625,12 @@
 				regulator-always-on;
 				regulator-boot-on;
 				regulator-min-microvolt = <1800000>;
-				regulator-max-microvolt = <1800000>;
+				regulator-max-microvolt = <3300000>;
 				
 				regulator-name = "vccio_sd";
 				regulator-state-mem {
 					regulator-on-in-suspend;
-					regulator-suspend-microvolt = <1800000>;
+					regulator-suspend-microvolt = <3300000>;
 				};
 			};
 			
@@ -674,7 +653,6 @@
 				regulator-boot-on;
 				regulator-min-microvolt = <1800000>;
 				regulator-max-microvolt = <3300000>;
-				regulator-init-microvolt = <3000000>;
 				regulator-name = "vcc_backlight";
 				regulator-state-mem {
 					regulator-on-in-suspend;
@@ -986,16 +964,7 @@
 			<0 RK_PA4 RK_FUNC_2 &pcfg_pull_none>;
 		};
 	};
-	
-	// leds {
-	// 	led_pins: led-pins {
-	// 		rockchip,pins =             
-	// 			<0 RK_PA0 RK_FUNC_GPIO &pcfg_pull_none>, /* charge blue  GPIO0_A0 */
-	// 			<0 RK_PC1 RK_FUNC_GPIO &pcfg_pull_none>, /* charge red   GPIO0_C1 */
-	// 			<0 RK_PB3 RK_FUNC_GPIO &pcfg_pull_none>, /* work blue   GPIO0_B3 */
-	// 			<0 RK_PB4 RK_FUNC_GPIO &pcfg_pull_none>; /* work red    GPIO0_B4 */
-	// 	};
-	// };
+
 	btns {
 		btn_pins: btn-pins {
 			rockchip,pins =
@@ -1019,6 +988,7 @@
 			<3 RK_PB2 RK_FUNC_GPIO &pcfg_pull_up>;
 		};
 	};
+	
 	headphone {
 		hp_det: hp-det {
 			rockchip,pins = <2 RK_PC6 RK_FUNC_GPIO &pcfg_pull_none>;
