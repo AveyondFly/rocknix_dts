@@ -1006,6 +1006,8 @@
 	btns {
 		btn_pins: btn-pins {
 			rockchip,pins =
+			<3 RK_PB0 RK_FUNC_GPIO &pcfg_pull_up>,
+			<3 RK_PB1 RK_FUNC_GPIO &pcfg_pull_up>,
 			<3 RK_PC6 RK_FUNC_GPIO &pcfg_pull_up>,
 			<3 RK_PC7 RK_FUNC_GPIO &pcfg_pull_up>,
 			<3 RK_PC4 RK_FUNC_GPIO &pcfg_pull_up>,

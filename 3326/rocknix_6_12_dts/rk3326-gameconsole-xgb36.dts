@@ -182,6 +182,7 @@
            autorepeat;
          */
         skip-absr;
+        abs-left-first;
 		invert-absx;
 		invert-absy;
 

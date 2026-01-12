@@ -964,7 +964,7 @@
 			<0 RK_PA4 RK_FUNC_2 &pcfg_pull_none>;
 		};
 	};
-
+	
 	btns {
 		btn_pins: btn-pins {
 			rockchip,pins =

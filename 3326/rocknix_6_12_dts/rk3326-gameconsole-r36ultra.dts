@@ -11,15 +11,16 @@
 #include <dt-bindings/leds/common.h>
 #include <dt-bindings/pinctrl/rockchip.h>
 #include "rk3326.dtsi"
+#include "retrogame_joypad_s2_f1.dtsi"
 
 / {
-	model = "GameConsole K36S";
-	compatible = "gameconsole,k36s", "rockchip,rk3326";
+	model = "GameConsole R36Ultra";
+	compatible = "gameconsole,r36u", "rockchip,rk3326";
 	
 	aliases {
-		mmc2 = &sdio;
-		mmc1 = &sdmmc;
 		mmc0 = &emmc;
+		mmc1 = &sdmmc;
+		mmc2 = &sdio;
 	};
 	
 	chosen {
@@ -105,192 +106,31 @@
 		};
 	};
 	
-	joypad: rocknix-singleadc-joypad {
-		compatible = "rocknix-singleadc-joypad";
-		
-		joypad-name = "retrogame_joypad";
-		joypad-product = <0x1101>;
-		joypad-revision = <0x0100>;
-		joypad-vendor = <0x484B>;
-		
-		status = "okay";
-		
-		/* gpio pincontrol setup */
+	leds: gpio-leds {
+		compatible = "gpio-leds";
+		pinctrl-0 = <&led_pins>;
 		pinctrl-names = "default";
-		pinctrl-0 = <&btn_pins_ctrl>;
 		
-		/* Analog mux define */
-		io-channel-names = "amux_adc";
-		io-channels = <&saradc 1>;
+		led-0 {
+			color = <LED_COLOR_ID_GREEN>;
+			default-state = "off";
+			function = LED_FUNCTION_STATUS;
+			gpios = <&gpio2 RK_PA1 GPIO_ACTIVE_HIGH>;
+		};
 		
-		/* adc mux channel count */
-		amux-count = <4>;
-		amux-channel-mapping = <2 3 1 0>;
-		/* adc mux select(a,b) gpio */
-		amux-a-gpios = <&gpio2 RK_PC0 GPIO_ACTIVE_LOW>;
-		amux-b-gpios = <&gpio2 RK_PB7 GPIO_ACTIVE_HIGH>;
-		/* adc mux enable gpio */
-		// amux-en-gpios = <&gpio2 RK_PB4 GPIO_ACTIVE_LOW>;
+		led-1 {
+			color = <LED_COLOR_ID_RED>;
+			default-state = "off";
+			function = LED_FUNCTION_CHARGING;
+			gpios = <&gpio2 RK_PA2 GPIO_ACTIVE_HIGH>;
+		};
+		led-2 {
+			color = <LED_COLOR_ID_BLUE>;
+			default-state = "off";
+			function = LED_FUNCTION_STATUS;
+			gpios = <&gpio2 RK_PA0 GPIO_ACTIVE_HIGH>;
+		};
 		
-		/* adc calculate scale */
-		button-adc-scale = <2>;
-		
-		/* adc deadzone range  */
-		button-adc-deadzone = <64>;
-		
-		/*
-		specifies fuzz value that is used to filter noise from
-		the event stream.
-		*/
-		button-adc-fuzz = <32>;
-		button-adc-flat = <32>;
-		
-		/*
-		Analog Stick data tuning value(precent)
-		p = positive direction, n = negative direction
-		report value = (real_adc_data * tuning_value) / 100
-		*/
-		abs_x-p-tuning = <200>;
-		abs_x-n-tuning = <200>;
-		
-		abs_y-p-tuning = <200>;
-		abs_y-n-tuning = <200>;
-		
-		abs_rx-p-tuning = <200>;
-		abs_rx-n-tuning = <200>;
-		
-		abs_ry-p-tuning = <200>;
-		abs_ry-n-tuning = <200>;
-		
-		/* poll device interval (ms), adc read interval */
-		poll-interval = <10>;
-		
-		/* required for RG351MP */
-		invert-absx;
-		invert-absy;
-		
-		/* gpio button auto repeat set value : default disable */
-		/*
-		autorepeat;
-		*/
-		
-		/*
-		*** MagicX XU10 - layoout ***
-		|-------------------------------|
-		| sw14  sw17         sw16  sw15 |
-		|-----|-------------------|-----|
-		|     |                   |     |
-		|vol+ |                   | sw13|
-		|vol- |                   |     |
-		|     |    LCD Display    |     |
-		|     |                   |     |
-		|     |                   |     |
-		|     |-------------------|     |
-		|         sw9     sw10          |
-		|                               |
-		|     sw1              sw7      |
-		|  sw3   sw4        sw8   sw6   |
-		|     sw2              sw5      |
-		|                               |
-		|          sw11   sw12          |
-		|                               |
-		|-------|---------------|-------|
-		*/
-		
-		/*
-		joypad driver is poll-device driver.
-		poll-device is does not support wakeup-source.
-		*/
-		sw1 {
-			gpios = <&gpio3 RK_PC6 GPIO_ACTIVE_LOW>;
-			label = "GPIO DPAD-UP";
-			linux,code = <BTN_DPAD_UP>;
-		};
-		sw2 {
-			gpios = <&gpio3 RK_PC7 GPIO_ACTIVE_LOW>;
-			label = "GPIO DPAD-DOWN";
-			linux,code = <BTN_DPAD_DOWN>;
-		};
-		sw3 {
-			gpios = <&gpio3 RK_PC4 GPIO_ACTIVE_LOW>;
-			label = "GPIO DPAD-LEFT";
-			linux,code = <BTN_DPAD_LEFT>;
-		};
-		sw4 {
-			gpios = <&gpio3 RK_PC5 GPIO_ACTIVE_LOW>;
-			label = "GPIO DPAD-RIGHT";
-			linux,code = <BTN_DPAD_RIGHT>;
-		};
-		sw5 {
-			gpios = <&gpio3 RK_PC0 GPIO_ACTIVE_LOW>;
-			label = "GPIO BTN-A";
-			linux,code = <BTN_EAST>;
-		};
-		sw6 {
-			gpios = <&gpio3 RK_PC1 GPIO_ACTIVE_LOW>;
-			label = "GPIO BTN-B";
-			linux,code = <BTN_SOUTH>;
-		};
-		sw7 {
-			gpios = <&gpio3 RK_PC3 GPIO_ACTIVE_LOW>;
-			label = "GPIO BTN-Y";
-			linux,code = <BTN_WEST>;
-		};
-		sw8 {
-			gpios = <&gpio3 RK_PC2 GPIO_ACTIVE_LOW>;
-			label = "GPIO BTN-X";
-			linux,code = <BTN_NORTH>;
-		};
-		sw9 {
-			gpios = <&gpio3 RK_PD0 GPIO_ACTIVE_LOW>;
-			label = "BTN_SELECT";
-			linux,code = <BTN_SELECT>;
-		};
-		sw10 {
-			gpios = <&gpio3 RK_PD1 GPIO_ACTIVE_LOW>;
-			label = "BTN_START";
-			linux,code = <BTN_START>;
-		};
-		/* this sw11 entry is SPECIAL, most RK3566 devices do not have
-		this physical button but for the sake of keeping compatibility
-		with ES and retroarch, this phantom button and offset will
-		allow existing userspace programs to work without doing any
-		new remapping thus saving lots of headaches and extra work */
-		sw11 {
-			gpios = <&gpio3 RK_PB2 GPIO_ACTIVE_LOW>;
-			label = "GPIO BTN_F";
-			linux,code = <BTN_MODE>;
-		};
-		sw12 {
-			gpios = <&gpio2 RK_PB5 GPIO_ACTIVE_LOW>;
-			label = "BTN_THUMBL";
-			linux,code = <BTN_THUMBL>;
-		};
-		sw13 {
-			gpios = <&gpio2 RK_PB6 GPIO_ACTIVE_LOW>;
-			label = "BTN_THUMBR";
-			linux,code = <BTN_THUMBR>;
-		};
-		sw14 {
-			gpios = <&gpio3 RK_PB3 GPIO_ACTIVE_LOW>;
-			label = "GPIO BTN_TR";
-			linux,code = <BTN_TR>;
-		};
-		sw15 {
-			gpios = <&gpio3 RK_PB4 GPIO_ACTIVE_LOW>;
-			label = "GPIO BTN_TR2";
-			linux,code = <BTN_TR2>;
-		};
-		sw16 {
-			gpios = <&gpio3 RK_PB5 GPIO_ACTIVE_LOW>;
-			label = "GPIO BTN_TL";
-			linux,code = <BTN_TL>;
-		};
-		sw17 {
-			gpios = <&gpio3 RK_PB6 GPIO_ACTIVE_LOW>;
-			label = "GPIO BTN_TL2";
-			linux,code = <BTN_TL2>;
-		};
 	};
 	
 	spk_amp: audio-amplifier {
@@ -305,8 +145,7 @@
 		compatible = "simple-audio-card";
 		pinctrl-names = "default";
 		pinctrl-0 = <&hp_det>;
-		simple-audio-card,name = "rk817_ext";
-		simple-audio-card,aux-devs = <&spk_amp>;
+		simple-audio-card,name = "rk817_int";
 		simple-audio-card,format = "i2s";
 		simple-audio-card,hp-det-gpio = <&gpio2 RK_PC6 GPIO_ACTIVE_LOW>;
 		simple-audio-card,mclk-fs = <256>;
@@ -348,7 +187,7 @@
 	vcc18_lcd0: vcc18-lcd0 {
 		compatible = "regulator-fixed";
 		regulator-name = "vcc18_lcd0_n";
-		gpio = <&gpio0 RK_PB5 GPIO_ACTIVE_HIGH>;
+		gpio = <&gpio3 RK_PA3 GPIO_ACTIVE_HIGH>;
 		enable-active-high;
 		pinctrl-0 = <&vcc18_lcd_n>;
 		pinctrl-names = "default";
@@ -372,6 +211,7 @@
 		regulator-boot-on;
 		vin-supply = <&usb_midu>;
 	};
+	
 	sdio_pwrseq: sdio-pwrseq {
 		compatible = "mmc-pwrseq-simple";
 		/*clocks = <&rk817 1>;
@@ -382,7 +222,72 @@
 		post-power-on-delay-ms = <2000>;
 		reset-gpios = <&gpio0 RK_PA2 GPIO_ACTIVE_LOW>;
 	};
+};
+
+&joypad {
+	compatible = "rocknix-singleadc-joypad";
+	joypad-name = "retrogame_joypad";
+	joypad-product = <0x1101>;
+	joypad-revision = <0x0100>;
+	joypad-vendor = <0x484B>;
 	
+	status = "okay";
+	
+	/* gpio pincontrol setup */
+	pinctrl-names = "default";
+	pinctrl-0 = <&btn_pins>;
+	
+	/* Analog mux define */
+	io-channel-names = "amux_adc";
+	io-channels = <&saradc 1>;
+	
+	/* adc mux channel count */
+	amux-count = <4>;
+	amux-channel-mapping = <2 3 1 0>;
+	/* adc mux select(a,b) gpio */
+	amux-a-gpios = <&gpio2 RK_PC0 GPIO_ACTIVE_LOW>;
+	amux-b-gpios = <&gpio2 RK_PB7 GPIO_ACTIVE_HIGH>;
+	/* adc mux enable gpio */
+	amux-en-gpios = <&gpio2 RK_PB3 GPIO_ACTIVE_LOW>;
+	rumble-gpio = <&gpio0 RK_PB7 GPIO_ACTIVE_LOW>;
+	
+	/*
+	Analog Stick data tuning value(precent)
+	p = positive direction, n = negative direction
+	report value = (real_adc_data * tuning_value) / 100
+	*/
+	abs_x-p-tuning = <200>;
+	abs_x-n-tuning = <200>;
+	
+	abs_y-p-tuning = <200>;
+	abs_y-n-tuning = <200>;
+	
+	abs_rx-p-tuning = <200>;
+	abs_rx-n-tuning = <200>;
+	
+	abs_ry-p-tuning = <200>;
+	abs_ry-n-tuning = <200>;
+	
+	/* required for RG351MP */
+	invert-absx;
+	invert-absy;
+up      { gpios = <&gpio3 RK_PC6 GPIO_ACTIVE_LOW>; };
+down    { gpios = <&gpio3 RK_PC7 GPIO_ACTIVE_LOW>; };
+left    { gpios = <&gpio3 RK_PC4 GPIO_ACTIVE_LOW>; };
+right   { gpios = <&gpio3 RK_PC5 GPIO_ACTIVE_LOW>; };
+a       { gpios = <&gpio3 RK_PC0 GPIO_ACTIVE_LOW>; };
+b       { gpios = <&gpio3 RK_PC1 GPIO_ACTIVE_LOW>; };
+y       { gpios = <&gpio3 RK_PC3 GPIO_ACTIVE_LOW>; };
+x       { gpios = <&gpio3 RK_PC2 GPIO_ACTIVE_LOW>; };
+select  { gpios = <&gpio3 RK_PD0 GPIO_ACTIVE_LOW>; };
+start   { gpios = <&gpio3 RK_PD1 GPIO_ACTIVE_LOW>; };
+mode    { gpios = <&gpio3 RK_PB2 GPIO_ACTIVE_LOW>; };
+tl      { gpios = <&gpio3 RK_PB5 GPIO_ACTIVE_LOW>; };
+tr      { gpios = <&gpio3 RK_PB3 GPIO_ACTIVE_LOW>; };
+tl2     { gpios = <&gpio3 RK_PB6 GPIO_ACTIVE_LOW>; };
+tr2     { gpios = <&gpio3 RK_PB4 GPIO_ACTIVE_LOW>; };
+thumbl  { gpios = <&gpio2 RK_PB5 GPIO_ACTIVE_LOW>; };
+thumbr  { gpios = <&gpio2 RK_PB6 GPIO_ACTIVE_LOW>; };
 };
 
 &dmc {
@@ -440,93 +345,49 @@
 		vcc-supply = <&vcc18_lcd0>;
 		reg = <0>;
 		backlight = <&backlight>;
-		reset-gpios = <&gpio3 RK_PB7 GPIO_ACTIVE_LOW>;
+		reset-gpios = <&gpio3 RK_PD3 GPIO_ACTIVE_LOW>;
 		pinctrl-names = "default";
 		pinctrl-0 = <&lcd_rst>;
 		panel_description =
 		"G size=153,85 delays=20,20,20,120,20 format=rgb888 lanes=4 flags=0xe03",
 		
-		"M clock=30000 horizontal=640,46,2,44 vertical=480,16,2,14 default=1",
-		"M clock=19950 horizontal=640,46,11,44 vertical=480,16,29,14",
-		"M clock=19110 horizontal=640,46,5,44 vertical=480,16,10,14",
-		"M clock=19650 horizontal=640,46,33,44 vertical=480,16,5,14",
-		"M clock=22080 horizontal=640,46,20,44 vertical=480,16,2,14",
-		"M clock=26740 horizontal=640,46,10,44 vertical=480,16,95,14",
-		"M clock=23940 horizontal=640,46,11,44 vertical=480,16,29,14",
-		"M clock=23040 horizontal=640,46,20,44 vertical=480,16,2,14",
-		"M clock=22920 horizontal=640,46,2,44 vertical=480,16,11,14",
-		"M clock=35310 horizontal=640,46,32,44 vertical=480,16,104,14",
-		"M clock=34560 horizontal=640,46,20,44 vertical=480,16,2,14",
-		"M clock=46080 horizontal=640,46,20,44 vertical=480,16,2,14",
+		"M clock=49507 horizontal=720,140,80,140 vertical=720,20,4,20 default=1",
+		"M clock=50097 horizontal=720,140,107,140 vertical=720,20,146,20",
+		"M clock=49607 horizontal=720,140,130,140 vertical=720,20,118,20",
+		"M clock=51407 horizontal=720,140,103,140 vertical=720,20,172,20",
+		"M clock=50347 horizontal=720,140,100,140 vertical=720,20,36,20",
+		"M clock=54397 horizontal=720,140,123,140 vertical=720,20,51,20",
+		"M clock=60957 horizontal=720,140,103,140 vertical=720,20,162,20",
+		"M clock=50220 horizontal=720,140,80,140 vertical=720,20,15,20",
+		"M clock=54600 horizontal=720,140,112,140 vertical=720,20,57,20",
+		"M clock=75450 horizontal=720,140,95,140 vertical=720,20,153,20",
+		"M clock=75330 horizontal=720,140,80,140 vertical=720,20,15,20",
+		"M clock=100440 horizontal=720,140,80,140 vertical=720,20,15,20",
 		
-		"I seq=ff30", "I seq=ff52", "I seq=ff01",
-		"I seq=e300",
-		"I seq=2510",
-		"I seq=286f", "I seq=2901", "I seq=2adf", "I seq=2c22",
-		"I seq=c30f",
-		"I seq=379c",
-		"I seq=38a7", "I seq=3941",
-		"I seq=8020",
-		"I seq=9167", "I seq=9267",
-		"I seq=a055", "I seq=a150", "I seq=a358", "I seq=a49c", "I seq=a702",
-		"I seq=a801", "I seq=a921", "I seq=aafc", "I seq=ab28", "I seq=ac06", "I seq=ad06", "I seq=ae06", "I seq=af03",
-		"I seq=b008", "I seq=b126", "I seq=b228", "I seq=b328", "I seq=b403", "I seq=b508", "I seq=b626", "I seq=b708",
-		"I seq=b826",
-		"I seq=c000", "I seq=c100", "I seq=c200",
-		"I seq=ff30", "I seq=ff52", "I seq=ff02",
-		"I seq=b002",
-		"I seq=d002",
-		"I seq=b10f",
-		"I seq=d110",
-		"I seq=b211",
-		"I seq=d212",
-		"I seq=b332",
-		"I seq=d333",
-		"I seq=b436",
-		"I seq=d436",
-		"I seq=b53c",
-		"I seq=d53c",
-		"I seq=b620",
-		"I seq=d620",
-		"I seq=b73e",
-		"I seq=d73e",
-		"I seq=b80e",
-		"I seq=d80d",
-		"I seq=b905",
-		"I seq=d905",
-		"I seq=ba11",
-		"I seq=da12",
-		"I seq=bb11",
-		"I seq=db11",
-		"I seq=bc13",
-		"I seq=dc14",
-		"I seq=bd14",
-		"I seq=dd14",
-		"I seq=be16",
-		"I seq=de18",
-		"I seq=bf0e",
-		"I seq=df0f",
-		"I seq=c017",
-		"I seq=e017",
-		"I seq=c107",
-		"I seq=e108",
-		"I seq=ff30", "I seq=ff52", "I seq=ff03",
-		"I seq=088a", "I seq=098b",
-		"I seq=3000", "I seq=3100", "I seq=3200", "I seq=3300", "I seq=3461", "I seq=35d4", "I seq=3624", "I seq=3703",
-		"I seq=4086", "I seq=4187", "I seq=4284", "I seq=4385", "I seq=4411", "I seq=45de", "I seq=46dd", "I seq=4711",
-		"I seq=48e0", "I seq=49df",
-		"I seq=5082", "I seq=5183", "I seq=5280", "I seq=5381", "I seq=5411", "I seq=55e2", "I seq=56e1", "I seq=5711",
-		"I seq=58e4", "I seq=59e3",
-		"I seq=820f", "I seq=830f", "I seq=8400", "I seq=850f", "I seq=860f", "I seq=870e",
-		"I seq=880e", "I seq=8906", "I seq=8a06", "I seq=8b07", "I seq=8c07", "I seq=8d04", "I seq=8e04", "I seq=8f05",
-		"I seq=9005",
-		"I seq=980f", "I seq=990f", "I seq=9a00", "I seq=9b0f", "I seq=9c0f", "I seq=9d0e", "I seq=9e0e", "I seq=9f06",
-		"I seq=a006", "I seq=a107", "I seq=a207", "I seq=a304", "I seq=a404", "I seq=a505", "I seq=a605",
-		"I seq=e002", "I seq=e152",
-		"I seq=ff30", "I seq=ff52", "I seq=ff00",
-		"I seq=3602",
-		"I seq=11 wait=200",
-		"I seq=29 wait=100";
+		"I seq=b9f11283",
+		"I seq=b1000000da80",
+		"I seq=b23c1230",
+		"I seq=b31010282803ff00000000",
+		"I seq=b480",
+		"I seq=b50a0a",
+		"I seq=b69797",
+		"I seq=b82622f013",
+		"I seq=ba338105f90e0e2000000000000000442500900a0000014f01000037",
+		"I seq=bc47",
+		"I seq=bf021100",
+		"I seq=c0737350500000127000",
+		"I seq=c12500323277e4ffffcccc7777",
+		"I seq=c68200bfff00ff",
+		"I seq=c7b8000a000000",
+		"I seq=c810401e02",
+		"I seq=cc0b",
+		"I seq=e0000b102c3d3f423a070d0f131513140f16000b102c3d3f423a070d0f131513140f16",
+		"I seq=e307070b0b0b0b00000000ff00c010",
+		"I seq=e9c8100a000080811231234f86a000470800000c00000000000c00000098028baf4602888888888898138baf5713888888888800000000000000000000000000",
+		"I seq=ea970c090909780000000000009f318ba8317588888888889f208ba820648888888888230000027100000000000000000000000000000040808100000000",
+		"I seq=efffff01",
+		"I seq=11 wait=250",
+		"I seq=29 wait=50";
 		port {
 			mipi_in_panel: endpoint {
 				remote-endpoint = <&mipi_out_panel>;
@@ -825,6 +686,8 @@
 };
 
 &sdio {
+	#address-cells = <1>;
+	#size-cells = <0>;
 	bus-width = <4>;
 	disable-wp;
 	max-frequency = <0x2faf080>;
@@ -842,7 +705,7 @@
 		reg = <1>;
 		interrupt-names = "host-wake";
 		interrupt-parent = <&gpio0>;
-		interrupts = <RK_PA5 IRQ_TYPE_LEVEL_HIGH>;
+		interrupts = <RK_PA1 IRQ_TYPE_LEVEL_HIGH>;
 		pinctrl-0 = <&wifi_host_wake_l>;
 		pinctrl-names = "default";
 	};
@@ -852,7 +715,11 @@
 	no-sdio;
 	no-sd;
 	disable-wp;
+	cap-mmc-highspeed;
 	non-removable;
+	bus-width = <0x08>;
+	fifo-depth = <0x100>;
+	max-frequency = <0x8f0d180>;
 	num-slots = <0x01>;
 	status = "okay";
 };
@@ -903,33 +770,25 @@
 
 &pinctrl {
 	btns {
-		btn_pins_ctrl: btn-pins-ctrl {
+		btn_pins: btn-pins {
 			rockchip,pins =
 			<3 RK_PC6 RK_FUNC_GPIO &pcfg_pull_up>,
 			<3 RK_PC7 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PC0 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PC1 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PC2 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PC3 RK_FUNC_GPIO &pcfg_pull_up>,
 			<3 RK_PC4 RK_FUNC_GPIO &pcfg_pull_up>,
 			<3 RK_PC5 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PD1 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PB6 RK_FUNC_GPIO &pcfg_pull_up>,
+			<3 RK_PC0 RK_FUNC_GPIO &pcfg_pull_up>,
+			<3 RK_PC1 RK_FUNC_GPIO &pcfg_pull_up>,
+			<3 RK_PC3 RK_FUNC_GPIO &pcfg_pull_up>,
+			<3 RK_PC2 RK_FUNC_GPIO &pcfg_pull_up>,
 			<3 RK_PD0 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PB3 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PB4 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PB5 RK_FUNC_GPIO &pcfg_pull_up>,
+			<3 RK_PD1 RK_FUNC_GPIO &pcfg_pull_up>,
 			<3 RK_PB2 RK_FUNC_GPIO &pcfg_pull_up>,
+			<3 RK_PB5 RK_FUNC_GPIO &pcfg_pull_up>,
+			<3 RK_PB3 RK_FUNC_GPIO &pcfg_pull_up>,
+			<3 RK_PB6 RK_FUNC_GPIO &pcfg_pull_up>,
+			<3 RK_PB4 RK_FUNC_GPIO &pcfg_pull_up>,
 			<2 RK_PB5 RK_FUNC_GPIO &pcfg_pull_up>,
-			<2 RK_PB6 RK_FUNC_GPIO &pcfg_pull_up>,
-			<2 RK_PB4 RK_FUNC_GPIO &pcfg_pull_up>,
-			<2 RK_PB7 RK_FUNC_GPIO &pcfg_pull_up>,
-			<2 RK_PC0 RK_FUNC_GPIO &pcfg_pull_up>;
-		};
-		
-		btn_pins_vol: btn-pins-vol {
-			rockchip,pins = <3 RK_PD2 RK_FUNC_GPIO &pcfg_pull_up>,
-			<3 RK_PD3 RK_FUNC_GPIO &pcfg_pull_up>;
+			<2 RK_PB6 RK_FUNC_GPIO &pcfg_pull_up>;
 		};
 	};
 	
@@ -941,7 +800,7 @@
 	
 	gpio-lcd {
 		lcd_rst: lcd-rst {
-			rockchip,pins = <3 RK_PB7 RK_FUNC_GPIO &pcfg_pull_none>;
+			rockchip,pins = <3 RK_PD3 RK_FUNC_GPIO &pcfg_pull_none>;
 		};
 	};
 	
@@ -960,8 +819,9 @@
 	gpio-led {
 		led_pins: led-pins {
 			rockchip,pins =
-			<0 RK_PC1 RK_FUNC_GPIO &pcfg_pull_none>,
-			<0 RK_PA0 RK_FUNC_GPIO &pcfg_pull_none>;
+			<2 RK_PA0 RK_FUNC_GPIO &pcfg_pull_none>,
+			<2 RK_PA1 RK_FUNC_GPIO &pcfg_pull_none>,
+			<2 RK_PA2 RK_FUNC_GPIO &pcfg_pull_none>;
 		};
 	};
 	
@@ -990,7 +850,7 @@
 	speaker {
 		spk_amp_enable_h: spk-amp-enable-h {
 			rockchip,pins =
-			<3 RK_PA7 RK_FUNC_GPIO &pcfg_pull_none>;
+			<3 RK_PA7 RK_FUNC_GPIO &pcfg_pull_up>;
 		};
 	};
 	sdio-pwrseq {
@@ -999,7 +859,7 @@
 			<0 RK_PA2 RK_FUNC_GPIO &pcfg_pull_none>;
 		};
 		wifi_host_wake_l: wifi-host-wake-l {
-			rockchip,pins = <0 RK_PA5 RK_FUNC_GPIO &pcfg_pull_down>;
+			rockchip,pins = <0 RK_PA1 RK_FUNC_GPIO &pcfg_pull_down>;
 		};
 	};
 };

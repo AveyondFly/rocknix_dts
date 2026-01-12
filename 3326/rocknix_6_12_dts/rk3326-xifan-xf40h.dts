@@ -130,7 +130,7 @@
 		amux-a-gpios = <&gpio2 RK_PC0 GPIO_ACTIVE_LOW>;
 		amux-b-gpios = <&gpio2 RK_PB7 GPIO_ACTIVE_HIGH>;
 		/* adc mux enable gpio */
-		amux-en-gpios = <&gpio2 RK_PB3 GPIO_ACTIVE_LOW>;
+		// amux-en-gpios = <&gpio2 RK_PB3 GPIO_ACTIVE_LOW>;
 
 		rumble-gpio = <&gpio3 RK_PA6 GPIO_ACTIVE_LOW>;
 
@@ -229,7 +229,7 @@
 			linux,code = <BTN_EAST>;
 		};
 		sw6 {
-			gpios = <&gpio3 RK_PC1 GPIO_ACTIVE_LOW> ;
+			gpios = <&gpio3 RK_PC1 GPIO_ACTIVE_LOW>;
 			label = "GPIO BTN-B";
 			linux,code = <BTN_SOUTH>;
 		};
@@ -374,7 +374,6 @@
         regulator-boot-on;
         vin-supply = <&usb_midu>;
     };
-
 	sdio_pwrseq: sdio-pwrseq {
 		compatible = "mmc-pwrseq-simple";
 		/*clocks = <&rk817 1>;
@@ -385,6 +384,7 @@
 		post-power-on-delay-ms = <2000>;
 		reset-gpios = <&gpio0 RK_PA2 GPIO_ACTIVE_LOW>;
 	};
+	
 };
 
 &dmc {

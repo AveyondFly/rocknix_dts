@@ -152,7 +152,7 @@
 		/* poll device interval (ms), adc read interval */
 		poll-interval = <10>;
 		skip-absr;
-     
+        abs-left-first;
         /* gpio button auto repeat set value : default disable */
         /*
         autorepeat;
