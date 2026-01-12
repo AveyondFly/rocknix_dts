@@ -55,6 +55,7 @@
 		pinctrl-1 = <&pwm0_pin>;
 		/* adc mux channel count */
 		amux-count = <0>;
+		poll-interval = <10>;
 		
 		sw1 {
 			gpios = <&gpio1 RK_PB4 GPIO_ACTIVE_LOW>;

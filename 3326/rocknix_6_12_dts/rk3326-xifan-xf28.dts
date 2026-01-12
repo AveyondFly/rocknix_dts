@@ -161,6 +161,7 @@
 		invert-absx;
 		invert-absy;
 		skip-absr;
+        abs-left-first;
     
         /* gpio button auto repeat set value : default disable */
         /*

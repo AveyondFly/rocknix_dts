@@ -130,7 +130,7 @@
 		amux-a-gpios = <&gpio2 RK_PC0 GPIO_ACTIVE_LOW>;
 		amux-b-gpios = <&gpio2 RK_PB7 GPIO_ACTIVE_HIGH>;
 		/* adc mux enable gpio */
-		amux-en-gpios = <&gpio2 RK_PB4 GPIO_ACTIVE_LOW>;
+		// amux-en-gpios = <&gpio2 RK_PB4 GPIO_ACTIVE_LOW>;
 
 		rumble-gpio = <&gpio3 RK_PA6 GPIO_ACTIVE_LOW>;
 
