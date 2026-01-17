@@ -10,12 +10,13 @@
 	model = "Game Console R50S";
 	compatible = "gameconsole,r35s", "gameconsole,r36s", "gameconsole,r50s", "rockchip,rk3326";
 	
-	joypad: odroidgo3-joypad {
+	joypad: rocknix-singleadc-joypad {
 		compatible = "rocknix-singleadc-joypad";
 		
-		joypad-name = "r36s_Gamepad";
-		joypad-product = <0x1188>;
-		joypad-revision = <0x0188>;
+		joypad-name = "retrogame_joypad";
+		joypad-product = <0x1101>;
+		joypad-revision = <0x0100>;
+		joypad-vendor = <0x484B>;
 		
 		status = "okay";
 		
@@ -178,7 +179,54 @@
 
 &internal_display {
 	compatible = "rocknix,generic-dsi";
-	panel_description = "G size=69,139 delays=2,20,10,50,20 format=rgb888 lanes=2 flags=0x603\0M clock=27500 horizontal=480,2,10,2 vertical=854,12,2,60 default=1\0M clock=27600 horizontal=480,2,22,2 vertical=854,12,166,60\0M clock=27500 horizontal=480,2,16,2 vertical=854,12,174,60\0M clock=27890 horizontal=480,2,18,2 vertical=854,12,185,60\0M clock=27600 horizontal=480,2,16,2 vertical=854,12,34,60\0M clock=32570 horizontal=480,2,14,2 vertical=854,12,169,60\0M clock=31920 horizontal=480,2,10,2 vertical=854,12,152,60\0M clock=27840 horizontal=480,2,16,2 vertical=854,12,2,60\0M clock=32750 horizontal=480,2,34,2 vertical=854,12,126,60\0M clock=38530 horizontal=480,2,18,2 vertical=854,12,91,60\0M clock=41760 horizontal=480,2,16,2 vertical=854,12,2,60\0M clock=55680 horizontal=480,2,16,2 vertical=854,12,2,60\0I seq=01 wait=5\0I seq=11 wait=250\0I seq=ff7701000010\0I seq=c0e903\0I seq=c11102\0I seq=c23108\0I seq=cc10\0I seq=b0000d140d10050208081e051311a32918\0I seq=b1000c140c100503080720051311a42918\0I seq=ff7701000011\0I seq=b06c\0I seq=b143\0I seq=b207\0I seq=b380\0I seq=b547\0I seq=b785\0I seq=b820\0I seq=b910\0I seq=c178\0I seq=c378\0I seq=d088 wait=250\0I seq=e0000002\0I seq=e108000a0007000900003333\0I seq=e20000000000000000000000000000\0I seq=e300003333\0I seq=e44444\0I seq=e50e60a0a01060a0a00a60a0a00c60a0a0\0I seq=e600003333\0I seq=e74444\0I seq=e80d60a0a00f60a0a00960a0a00b60a0a0\0I seq=eb0201e4e4440040\0I seq=ec0201\0I seq=edab89765401ffffffffffff10456798ba\0I seq=ff7701000000\0I seq=3a70\0I seq=53ec\0I seq=55b3\0I seq=5eff\0I seq=29 wait=50";
+	panel_description =
+	"G size=69,139 delays=2,20,10,50,20 format=rgb888 lanes=2 flags=0xa03",
+	
+	"M clock=30265 horizontal=480,18,22,2 vertical=854,18,34,60 default=1",
+	// "M clock=60530  horizontal=480,18,22,2 vertical=854,18,34,60",
+	// "M clock=27600 horizontal=480,2,22,2 vertical=854,12,166,60",
+	// "M clock=27500 horizontal=480,2,16,2 vertical=854,12,174,60",
+	// "M clock=27890 horizontal=480,2,18,2 vertical=854,12,185,60",
+	// "M clock=27600 horizontal=480,2,16,2 vertical=854,12,34,60",
+	// "M clock=32570 horizontal=480,2,14,2 vertical=854,12,169,60",
+	// "M clock=31920 horizontal=480,2,10,2 vertical=854,12,152,60",
+	// "M clock=27840 horizontal=480,2,16,2 vertical=854,12,2,60",
+	// "M clock=32750 horizontal=480,2,34,2 vertical=854,12,126,60",
+	// "M clock=38530 horizontal=480,2,18,2 vertical=854,12,91,60",
+	// "M clock=41760 horizontal=480,2,16,2 vertical=854,12,2,60",
+	// "M clock=55680 horizontal=480,2,16,2 vertical=854,12,2,60",
+	
+	"I seq=01 wait=5",
+	"I seq=11 wait=250",
+	"I seq=ff7701000010",
+	"I seq=c0e903",
+	"I seq=c11102",
+	"I seq=c23108",
+	"I seq=cc10",
+	"I seq=b0000d140d10050208081e051311a32918",
+	"I seq=b1000c140c100503080720051311a42918",
+	"I seq=ff7701000011",
+	"I seq=b06c", "I seq=b143", "I seq=b207", "I seq=b380", "I seq=b547", "I seq=b785",
+	"I seq=b820", "I seq=b910",
+	"I seq=c178", "I seq=c378",
+	"I seq=d088 wait=250",
+	"I seq=e0000002",
+	"I seq=e108000a0007000900003333",
+	"I seq=e20000000000000000000000000000",
+	"I seq=e300003333",
+	"I seq=e44444",
+	"I seq=e50e60a0a01060a0a00a60a0a00c60a0a0",
+	"I seq=e600003333",
+	"I seq=e74444",
+	"I seq=e80d60a0a00f60a0a00960a0a00b60a0a0",
+	"I seq=eb0201e4e4440040",
+	"I seq=ec0201",
+	"I seq=edab89765401ffffffffffff10456798ba",
+	"I seq=ff7701000000",
+	"I seq=3a70",
+	"I seq=53ec", "I seq=55b3",
+	"I seq=5eff",
+	"I seq=29 wait=50";
 	rotation = <0x10e>;
 };
 
